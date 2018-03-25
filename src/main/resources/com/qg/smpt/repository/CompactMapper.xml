@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qg.smpt.web.repository.CompactMapper" >
+
+    <select id="selectMaxCompact" resultType="int">
+        SELECT max(compact_number)
+        FROM compact;
+    </select>
+
+    <insert id="addCompact" parameterType="com.qg.smpt.printer.Compact">
+      INSERT INTO compact(compact_number)
+      VALUE (#{compact.compactNumber})
+    </insert>
+
+    <update id="updatePrinter">
+        UPDATE printer
+        <set>
+            <if test="credibility != null">
+                credibility = #{credibility},
+            </if>
+            <if test="speed != null ">
+                speed = #{speed},
+            </if>
+            <if test="price != null ">
+                price = #{price}
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <select id="getCreById" resultType="double">
+        SELECT credibility
+        FROM printer
+        WHERE id = #{id};
+    </select>
+
+    <select id="getPriById" resultType="double">
+        SELECT price
+        FROM printer
+        WHERE id = #{id};
+    </select>
+
+    <select id="getPrinterCapacityByOrderNumber" resultType="int">
+        SELECT printer_capacity
+        FROM capacity
+        WHERE order_number = #{orderNumber};
+    </select>
+</mapper>
