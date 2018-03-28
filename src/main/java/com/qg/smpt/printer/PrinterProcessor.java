@@ -20,6 +20,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
@@ -229,7 +230,14 @@ public class PrinterProcessor implements Runnable, Lifecycle{
 
         // 将byteBuffer 中的字节数组进行提取
         byte[] bytes = byteBuffer.array();
-
+        byte[] transformed = null;
+        try {
+            transformed = new String(bytes,"iso-8859-1").getBytes("iso-8859-1");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        LOGGER.log(Level.DEBUG, "bytes is [{0}]", Arrays.toString(transformed));
+        LOGGER.log(Level.DEBUG, "bytess  is [{0}]", Arrays.toString(bytes));
 
         if (bytes[0] == (byte)0xCF && bytes[1] == (byte)0xFC) {
 //            DebugUtil.printBytes(bytes);
@@ -315,13 +323,13 @@ public class PrinterProcessor implements Runnable, Lifecycle{
         //计算信任度
         Double credibility =(BConstants.initialCre + BConstants.alpha*printer.getPrintSuccessNum()-BConstants.beta*printer.getPrintErrorNum());
 
-        //存储信任度
+        //存储信任度 暂时废弃
         printer.setCre(credibility);
 
         //存储缓冲区大小
         printer.setBufferSize(compactModel.getBufferSize());
 
-        //计算存储代价 并存储打印代价
+        //计算存储代价 并存储打印代价 暂时废弃
         double price = credibility * compactModel.getSpeed();
         printer.setPrice(price);
 

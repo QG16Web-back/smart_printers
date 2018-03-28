@@ -499,10 +499,11 @@ public class Compact {
     public void sendByPrinter(int printerId,List<Order> orders) {
         LOGGER.log(Level.DEBUG, "[指定打印机下单]指定打印机下单");
         Printer printer = ShareMem.printerIdMap.get(printerId);      //获取打印机对象
+        //todo
         if (printer.getBufferSize() == null) printer.setBufferSize((short) 5120);
 
         while (orders.size() != 0) {
-
+            //批次订单对象
             BulkOrder bOrders = new BulkOrder(new ArrayList<BOrder>());
 
 

@@ -133,6 +133,7 @@ public class PrinterController {
 
     /***
      * 发送合同网数据报文，暂时不用
+     * 1
      * @param
      * @return
      */
@@ -150,12 +151,13 @@ public class PrinterController {
 
     /***
      * 直接发送数据报文
+     * 1
      * @param
      * @return
      */
-    @RequestMapping(value="/printer/sendBulk/{userId}/{flag}/{number}",  method=RequestMethod.GET ,produces="application/json;charset=UTF-8")
+    @RequestMapping(value="/printer/sendBulk/{userId}/{flag}/{number}/{size}/{point}",  method=RequestMethod.GET ,produces="application/json;charset=UTF-8")
     @ResponseBody
-    public String sendBulk(@PathVariable int userId,@PathVariable int number,@PathVariable int flag) {		//此处先设置简略的逻辑
+    public String sendBulk(@PathVariable int userId,@PathVariable int number,@PathVariable int flag, @PathVariable int size,@PathVariable double point) {		//此处先设置简略的逻辑
         if(ShareMem.userIdMap.get(userId)==null){
             return "请先连接打印机";
         }
@@ -164,32 +166,44 @@ public class PrinterController {
         if (ShareMem.priSocketMap.get(ShareMem.printerIdMap.get(compact.getMaxCreForBulkPrinter(userId)))==null){
             return "打印机目前已断开，请先连接打印机";
         }
-
+        double finalsize;
+        finalsize = size + 0.1 * point;
+        //如果 size 不合规格，修改之
+        if(finalsize > 10 || finalsize < 0){
+            finalsize = 0;
+        }
         List<Order> orders = new ArrayList<Order>();
         for (int i = 0; i<number; i++){
-            orders.add(OrderBuilder.produceOrder(false,false));
+            orders.add(OrderBuilder.produceOrder(finalsize,false,false));
         }
         compact.sendBulkDitectly(userId,flag,orders);
         return JsonUtil.jsonToMap(new String[]{"status"}, new Object[]{"SUCCESS"});
     }
 
-
     /***
      * 测试接口，多台主控板平均分配订单，用于测试订单跟踪
+     * 1
      * @param
      * @return
      */
-    @RequestMapping(value="/printer/test/{userId}/{number}",  method=RequestMethod.GET ,produces="application/json;charset=UTF-8")
+    @RequestMapping(value="/printer/test/{userId}/{number}{size}/{point}",  method=RequestMethod.GET ,produces="application/json;charset=UTF-8")
     @ResponseBody
-    public String test(@PathVariable int userId, @PathVariable int number) {
+    public String test(@PathVariable int userId, @PathVariable int number, @PathVariable int size,@PathVariable int point) {
         //此处先设置简略的逻辑
         if(ShareMem.userIdMap.get(userId)==null){
             return "打印机目前已断开，请先连接打印机";
         }
+        double finalsize;
+        finalsize = size + 0.1*point;
+        //如果 size 不合规格，修改之
+        if(finalsize > 10 || finalsize < 0){
+            finalsize = 0;
+        }
+
         Compact compact = new Compact();
         List<Order> orders = new ArrayList<Order>();
         for (int i = 0; i<number; i++){
-            orders.add(OrderBuilder.produceOrder(false,false));
+            orders.add(OrderBuilder.produceOrder(finalsize,false,false));
         }
         compact.test(userId,orders);
         return JsonUtil.jsonToMap(new String[]{"status"}, new Object[]{"SUCCESS"});
@@ -198,22 +212,31 @@ public class PrinterController {
 
     /***
      * 测试接口，指定某台打印机进行打印任务
+     * 1
      * @param
      * @return
      */
-    @RequestMapping(value="/printer/choicePrinter/{printerId}/{number}",  method=RequestMethod.GET ,produces="application/json;charset=UTF-8")
+    @RequestMapping(value="/printer/choicePrinter/{printerId}/{number}/{size}/{point}",  method=RequestMethod.GET ,produces="application/json;charset=UTF-8")
     @ResponseBody
-    public String choicePrinter(@PathVariable int printerId, @PathVariable int number) {
+    public String choicePrinter(@PathVariable int printerId, @PathVariable int number, @PathVariable int size,@PathVariable int point) {
         //此处先设置简略的逻辑
         if(ShareMem.priSocketMap.get(ShareMem.printerIdMap.get(printerId))==null){
             return "打印机目前已断开，请先连接打印机";
         }
+        double finalsize;
+        finalsize = size + 0.1 * point;
+        //如果 size 不合规格，修改之
+        if(finalsize > 10 || finalsize < 0){
+            finalsize = 0;
+        }
+        LOGGER.log(Level.DEBUG,"size 00<<< is " + size,PrinterController.class);
         Compact compact = new Compact();
         List<Order> orders = new ArrayList<Order>();
         for (int i = 0; i<number; i++){
-            orders.add(OrderBuilder.produceOrder(false,false));
+            orders.add(OrderBuilder.produceOrder(finalsize,false,false));
         }
         compact.sendByPrinter(printerId,orders);
+        LOGGER.log(Level.DEBUG,"json success>>>>",PrinterController.class);
         return JsonUtil.jsonToMap(new String[]{"status"}, new Object[]{"SUCCESS"});
     }
 }

@@ -55,7 +55,7 @@ public class OrdersDispatcher implements Runnable{
         Compact compact = new Compact();
         User user = ShareMem.userIdMap.get(userId);
         List<Printer> printers = user.getPrinters();
-        //信任度最佳打印机的打印速度，用来决定该用户处理能力，即订单上限值
+        //信任度最佳的打印机总打印速度，用来决定该用户处理能力，即订单上限值
         int speedSum = ShareMem.printerIdMap.get(compact.getMaxCreForBulkPrinter(userId)).getSpeed();
 
         if (speedSum != 0)

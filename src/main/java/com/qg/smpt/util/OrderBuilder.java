@@ -121,15 +121,108 @@ public class OrderBuilder {
 		List<Item> items = new ArrayList<Item>(randomNum);
 		for(int i = 0; i < randomNum; i++){
 
-			int a = getRandom(10) + 1;
-			if (a%2==0) a = 20;
-			else a = 1;
-			for (int b = 0; b < a; b++)
+//			int a = getRandom(10) + 1;
+//			if (a%2==0) a = 20;
+//			else a = 1;
+//			for (int b = 0; b < a; b++)
 					items.add(createItem(i));
 
 		}
 		order.setItems(items);
 		
+		//生成其他付费信息
+		order.setOrderMealFee(getMealCost());
+		order.setOrderDisFee(getdeliveryCost());
+		order.setOrderPreAmount(getRandom(6));
+		order.setOrderPayStatus("已支付");
+
+		// 判断是否设置加急
+		if (flag) {
+			order.setOrderType('1');
+		} else {
+			order.setOrderType('0');
+		}
+		return order;
+	}
+
+	/**
+	 * 由林楷编写，提供给嵌入式指定大小测试
+	 * @param size
+	 * @param flag
+	 * @param hasError
+	 * @return
+	 */
+	public static Order produceOrder(double size,boolean flag, boolean hasError) {
+		Order order = new Order();
+		order.setHasError(hasError);
+
+		int randomNum = 0;
+
+		//生活公司信息
+		randomNum = getRandom(4);
+		order.setCompany(companys[randomNum]);
+
+		//生成商家信息
+//		randomNum = getRandom(4);
+		if (userCount > 0) {
+			randomNum = getRandom(userCount);
+			User u = users.get(randomNum);
+			order.setClientName(u.getUserStore());
+			order.setClientAddress(u.getUserAddress());
+			order.setClientTelephone(u.getUserPhone());
+			order.setOrderStatus(String.valueOf(BConstants.orderWait));
+		}
+
+		//获取订单信息
+		order.setId(++ShareMem.currentOrderNum);
+
+		order.setOrderTime((new Date()));
+		order.setExpectTime(expectTimes[getRandom(6)]);
+		order.setOrderRemark(remarks[getRandom(3)]);
+
+		//生成顾客信息
+		randomNum = getRandom(6);
+		order.setUserName(customers[randomNum]);
+		order.setUserAddress(cAddress[randomNum]);
+		order.setUserTelephone(cContact[randomNum]);
+		order.setOrderStatus(Integer.valueOf(BConstants.orderWait).toString());
+
+		//生成菜
+		List<Item> items = null;
+		//将byte型转成菜的数目
+		if (size != 0) {
+			if(size <= 1 && size >= 0.57){
+				size -= 0.57;
+				size *= 38;
+			}else {
+				size = 36 *(size - 1);
+				size += 16;
+			}
+			size = size - size%1;
+			LOGGER.log(Level.DEBUG," 1/size is " + size,OrderBuilder.class);
+			items = new ArrayList<>((int) size);
+		} else {
+			//随机大小的话随机性要大一点
+			randomNum = getRandom(5);
+			items = new ArrayList<>(150);
+		}
+
+		if (size == 0) {
+			LOGGER.log(Level.DEBUG," 2/size is " + size,OrderBuilder.class);
+			for (int i = 0; i < randomNum; i++) {
+				int a = getRandom(10) + 1;
+				if (a%2==0) a = 20;
+				else a = 1;
+				for (int b = 0; b < a; b++)
+					items.add(createItem(i));
+			}
+		} else {
+			for (int c = 0; c < size; c++) {
+				items.add(createItem(1));
+			}
+		}
+		order.setItems(items);
+		LOGGER.log(Level.DEBUG,"items is " + items + "and size is " + size,OrderBuilder.class);
 		//生成其他付费信息
 		order.setOrderMealFee(getMealCost());
 		order.setOrderDisFee(getdeliveryCost());
@@ -280,7 +373,7 @@ public class OrderBuilder {
 		Item item = new Item();
 		item.setName(dish[i]);
 		item.setPrice(prices[i]);
-		item.setCount(getRandom(5) + 1);
+		item.setCount(1);//getRandom(5) + 1
 		return item;
 	}
 	

@@ -91,22 +91,30 @@ public class OrderController {
 	}
 
 	/***
+	 * 1
 	 * 批量下单入口,将订单存入缓存中,利用数字
 	 * @param userId
 	 * @return
 	 */
-	@RequestMapping(value="sendOrder/{userId}/{number}", method=RequestMethod.POST, produces="application/json;charset=utf-8")
+	@RequestMapping(value="sendOrder/{userId}/{number}/{size}/{point}", method=RequestMethod.POST, produces="application/json;charset=utf-8")
 	@ResponseBody
-	public String sendOrder(@PathVariable int userId,@PathVariable int number) {
+	public String sendOrder(@PathVariable int userId,@PathVariable int number,@PathVariable int size,@PathVariable int point) {
 
 		//此处先设置简略的逻辑
 		if(ShareMem.userIdMap.get(userId)==null){
 			return "打印机目前已断开，请先连接打印机";
 		}
 
+		double finalsize;
+		finalsize = size + 0.1 * point;
+		//如果 size 不合规格，修改之
+		if(finalsize > 10 || finalsize < 0){
+			finalsize = 0;
+		}
+
 		List<Order> order = new ArrayList<Order>();
 		for (int i = 0; i<number; i++){
-			order.add(OrderBuilder.produceOrder(false,false));
+			order.add(OrderBuilder.produceOrder(finalsize,false,false));
 		}
 
 
