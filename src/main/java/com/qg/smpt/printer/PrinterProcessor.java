@@ -12,7 +12,6 @@ import com.qg.smpt.web.repository.CompactMapper;
 import com.qg.smpt.web.repository.OrderMapper;
 import com.qg.smpt.web.repository.PrinterMapper;
 import com.qg.smpt.web.repository.UserMapper;
-import com.sun.glass.ui.Size;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.session.SqlSession;
@@ -260,8 +259,8 @@ public class PrinterProcessor implements Runnable, Lifecycle{
                     parseBulkStatus(bytes);
                     break;
                 case BConstants.printStatus:
-                    parsePrinterStatus(bytes);
                     LOGGER.log(Level.DEBUG, "打印机 接收打印机状态数据 thread [{1}] ", this.getId());
+                    parsePrinterStatus(bytes);
                     break;
                 default:
                     LOGGER.log(Level.WARN, "打印机  发送状态数据 thread [{1}] 错误", this.getId());
@@ -728,6 +727,7 @@ public class PrinterProcessor implements Runnable, Lifecycle{
      */
     private void parseOrderStatus(byte[] bytes, SocketChannel socketChannel) {
 
+        System.out.println(bytes + "!!!!!!! dingdanzhuangtaidayin here");
         // 所有订单报文长度都是28字节
         BOrderStatus bOrderStatus;
 
@@ -1084,8 +1084,17 @@ public class PrinterProcessor implements Runnable, Lifecycle{
      * @param bytes
      */
     private void parseBulkStatus(byte[] bytes) {
+        StringBuilder hexString = new StringBuilder();
+        for (int i = 0;i < bytes.length; i++){
+            if ((bytes[i] & 0xff) < 0x10)
+                hexString.append("0");
+            hexString.append(Integer.toHexString(0xFF & bytes[i]));
+        }
+        LOGGER.log(Level.DEBUG,"picidingdan>>>>>>" + hexString.toString().toLowerCase() + ">>>>>>>>" +bytes.length);
+
         BBulkStatus bBulkStatus = BBulkStatus.bytesToBulkStatus(bytes);
 
+        System.out.println("picixuhao" + bBulkStatus.bulkId);
         LOGGER.log(Level.DEBUG, "打印机 [{0}] 处理批次订单 [{1}], 发送时间戳 [{2}]， 校验和 [{3}] printerProcessor 线程 [{4}]", bBulkStatus.printerId,bBulkStatus.bulkId,
                 bBulkStatus.seconds, bBulkStatus.checkSum, this.id);
 
@@ -1144,6 +1153,7 @@ public class PrinterProcessor implements Runnable, Lifecycle{
      * @param bytes
      */
     private void parsePrinterStatus(byte[] bytes) {
+        System.out.println(bytes + ">>>>>>>bytes is here");
         BPrinterStatus bPrinterStatus = BPrinterStatus.bytesToPrinterStatus(bytes);
 
         LOGGER.log(Level.DEBUG, "打印机[{0}] 请求flag [{1}] 时间戳 [{2}] 打印单元序号 [{3}] 检验和 [{4}] 当前线程 [{5}]",
@@ -1154,9 +1164,17 @@ public class PrinterProcessor implements Runnable, Lifecycle{
             LOGGER.log(Level.WARN, "打印机[{0}]未找到内中中对应打印机对象", bPrinterStatus.printerId);
             return ;
         }
-        LOGGER.log(Level.DEBUG, ((bPrinterStatus.flag ) + "" ));
-        LOGGER.log(Level.DEBUG, ((bPrinterStatus.flag ) & 0xFF) + "" ) ;
-        printer.setPrinterStatus( ( (bPrinterStatus.flag ) & 0xFF ) + "");
+        LOGGER.log(Level.DEBUG, ((bPrinterStatus.flag ) + "打印机状态" ));
+        LOGGER.log(Level.DEBUG, ((bPrinterStatus.flag ) & 0xFF) + "打印机状态&&" ) ;
+        if (((bPrinterStatus.flag ) & 0xFF) == 14){
+            LOGGER.log(Level.DEBUG,"health");
+
+        }else if(((bPrinterStatus.flag ) & 0xFF) == 15){
+            LOGGER.log(Level.DEBUG,"middleHealth");
+        }else {
+            LOGGER.log(Level.DEBUG,"notHealth");
+        }
+        printer.setPrinterStatus( ( (bPrinterStatus.flag ) & 0xFF ) + "打印机状态");
     }
 
     /* getter 模块 */

@@ -7,8 +7,6 @@ import com.qg.smpt.util.OrderBuilder;
 import com.qg.smpt.web.model.Constant;
 import com.qg.smpt.web.model.Order;
 import com.qg.smpt.web.model.OrderRequest;
-import com.qg.smpt.web.model.User;
-import com.sun.tools.corba.se.idl.constExpr.Or;
 import org.codehaus.jackson.type.TypeReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;

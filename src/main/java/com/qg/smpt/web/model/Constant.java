@@ -3,7 +3,8 @@ package com.qg.smpt.web.model;
 public class Constant {
 	// 打印机状态常量
 	public static final byte PRINTER_HEATHY = 0x0e;
-	
+	public static final byte PRINTER_SUB_HEATHY = 0x0f;
+
 	
 	// 操作结果
 	public static final String SUCCESS = "SUCCESS";

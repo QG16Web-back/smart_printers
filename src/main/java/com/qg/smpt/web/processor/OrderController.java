@@ -241,7 +241,28 @@ public class OrderController {
 		LOGGER.log(Level.DEBUG, "正在查询 用户[{0}] 的已打印订单", userId);
 
 		// 根据用户id获取订单
-		List<Order> orderList = orderService.queryByUser(userId);
+		List<Order> orderList = new ArrayList<>();
+		Order order1 = new Order();
+		order1.setId(1);
+		order1.setOrderStatus("1");
+		Order order2 = new Order();
+        order2.setId(2);
+        order2.setOrderStatus("2");
+		Order order3 = new Order();
+        order3.setId(3);
+        order3.setOrderStatus("3");
+		Order order4 = new Order();
+        order4.setId(4);
+        order4.setOrderStatus("4");
+		Order order5 = new Order();
+        order5.setId(5);
+        order5.setOrderStatus("5");
+		orderList.add(order1);
+        orderList.add(order2);
+
+        orderList.add(order3);
+        orderList.add(order4);
+        orderList.add(order5);
 
 		String json =  JsonUtil.jsonToMap(new String[]{"retcode","data"},
 				new Object[]{Constant.TRUE,orderList});

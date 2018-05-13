@@ -63,13 +63,13 @@ public class LoginController {
 	}
 	
 	
-	@RequestMapping(value="/login", method=RequestMethod.POST, produces="application/html;charset=utf-8" )
+	@RequestMapping(value="/login", method=RequestMethod.GET, produces="application/html;charset=utf-8" )
 	public String login(String userAccount, String userPassword, HttpServletRequest request, HttpServletResponse response) {
 		User user = installUser(userAccount, userPassword);
 		
 		// check the login infomation is correct
 		if(!checkInput(user)){
-			 return "redirect:/webContent/html/order_index.html";
+			 return "redirect:/webContent/index.html";
 		}
 		
 		// run the login method.
@@ -106,7 +106,7 @@ public class LoginController {
 			 return "redirect:/html/order_index.html?userId=" + loginUser.getId();
 			 
 		}else{
-			 return "redirect:/html/user_login.html";
+			 return "redirect:/index.html";
 		}
 		
 	}

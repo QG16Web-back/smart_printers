@@ -175,7 +175,7 @@ public class Compact {
         //缓存存入经过筛选参与合同网的打印机
         List<Printer> compactOfPrinter = ShareMem.compactOfPrinter.get((short)compactNumber);
         if (compactOfPrinter==null) {
-            compactOfPrinter = new ArrayList<Printer>();
+            compactOfPrinter = new ArrayList<>();
             ShareMem.compactOfPrinter.put((short) compactNumber, compactOfPrinter);
         }
         int capacity = 0;
@@ -516,13 +516,15 @@ public class Compact {
                     if (bOrders.getDataSize() + bOrder.size > printer.getBufferSize()) break;
 
                     bOrders.getbOrders().add(bOrder);
+                    if (bOrders.getbOrders().size() > 1)
+                    System.out.println("!!!picineixuhao" + bOrders.getbOrders().get(1).getInNumber());
                     bOrders.getOrders().add(order);
                     //更新所有订单的字节数（不包括批次报文）
                     bOrders.setDataSize(bOrders.getDataSize() + bOrder.size);
                     //设置所属批次
                     bOrder.bulkId = (short) printer.getCurrentBulk();
                     //设置批次内的序号
-                    bOrder.inNumber = (short) bOrders.getOrders().size();
+                    bOrder.inNumber = (short) (bOrders.getOrders().size()-1);
                     //为订单设置打印机
                     order.setMpu(printer.getId());
                     orderList.add(order);
@@ -545,8 +547,16 @@ public class Compact {
             }
 
             //引用以前的批次报文，但是只用里边的data属性，data即是这个批次的订单报文数据
+//            System.out.println("maxpicineixuhao + " + bOrders.getbOrders().get(bOrders.getbOrders().size()-1).getInNumber());
             BBulkOrder bBulkOrder = BulkOrder.convertBBulkOrder(bOrders, false);
             byte[] bBulkOrderBytes = BBulkOrder.bBulkOrderToBytes(bBulkOrder);
+            StringBuilder hexString = new StringBuilder();
+            for (int i = 0;i < bBulkOrderBytes.length; i++){
+                if ((bBulkOrderBytes[i] & 0xff) < 0x10)
+                    hexString.append("0");
+                hexString.append(Integer.toHexString(0xFF & bBulkOrderBytes[i]));
+            }
+            LOGGER.log(Level.DEBUG,"发放任务 data is" + hexString.toString().toLowerCase() + ">>>>>>>>");
 
             try {
                 SocketChannel socketChannel = ShareMem.priSocketMap.get(printer);
