@@ -220,9 +220,9 @@ public class PrinterController {
     @ResponseBody
     public String choicePrinter(@PathVariable int printerId, @PathVariable int number, @PathVariable int size,@PathVariable int point) {
         //此处先设置简略的逻辑
-        if(ShareMem.priSocketMap.get(ShareMem.printerIdMap.get(printerId))==null){
-            return "打印机目前已断开，请先连接打印机";
-        }
+//        if(ShareMem.priSocketMap.get(ShareMem.printerIdMap.get(printerId))==null){
+//            return "打印机目前已断开，请先连接打印机";
+//        }
         double finalsize;
         finalsize = size + 0.1 * point;
         //如果 size 不合规格，修改之

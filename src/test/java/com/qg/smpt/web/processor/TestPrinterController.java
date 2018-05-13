@@ -1,6 +1,5 @@
 package com.qg.smpt.web.processor;
 
-import com.qg.smpt.web.model.Printer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +22,7 @@ public class TestPrinterController {
 
     @Test
     public void testPrinterStatus() {
-        loginController.login("1", "1",new MockHttpServletRequest(), new MockHttpServletResponse());
-
-        System.out.println(printerController.queryPrinter(1));
+//        loginController.login("1", "1",new MockHttpServletRequest(), new MockHttpServletResponse());
+//        System.out.println(printerController.queryPrinter(1));
     }
 }

@@ -905,10 +905,7 @@ public class PrinterProcessor implements Runnable, Lifecycle{
             bulkOrder.getOrders().addAll(orderList);
             bulkOrder.setDataSize(totalSize);
 
-            /* 转化发送批次订单数据 */
-            byte[] bBulkOrderByters = BBulkOrder.bBulkOrderToBytes(BulkOrder.convertBBulkOrder(bulkOrder, false));
-            // bBulkOrderByters[15] = (byte)0x1;
-            LOGGER.log(Level.DEBUG, "打印机 [{0}] 重新发送批次转移订单 当前线程 [{1}]", bOrderStatus.printerId, this.id);
+
 //            DebugUtil.printBytes(bBulkOrderByters);
 
             SqlSession sqlSession = sqlSessionFactory.openSession();
@@ -941,6 +938,11 @@ public class PrinterProcessor implements Runnable, Lifecycle{
 //                }
 
                 if (printerChannel != null && printerChannel != socketChannel) {
+                    /* 转化发送批次订单数据 */
+                    byte[] bBulkOrderByters = BBulkOrder.bBulkOrderToBytes(BulkOrder.convertBBulkOrder(bulkOrder, false));
+                    // bBulkOrderByters[15] = (byte)0x1;
+                    LOGGER.log(Level.DEBUG, "打印机 [{0}] 重新发送批次转移订单 当前线程 [{1}]", bOrderStatus.printerId, this.id);
+
                     // 重置打印机出错次数
 //                    user.resetErrorNum();
                     // 直接发送到信任度最高的打印机
@@ -950,8 +952,10 @@ public class PrinterProcessor implements Runnable, Lifecycle{
 //                    if (user.getErrorNum() == 3) {
 //                        return;
 //                    }
-                    // 如果找不到打印机或者只有一台打印机的情况，直接按照原路返回
-                    socketChannel.write(ByteBuffer.wrap(bBulkOrderByters));
+                      List<BulkOrder> bufferMapList = ShareMem.priBufferMapList.get(printer);
+                      bufferMapList.add(bulkOrder);
+
+//                    socketChannel.write(ByteBuffer.wrap(bBulkOrderByters));
                 }
 
             } catch (IOException e) {

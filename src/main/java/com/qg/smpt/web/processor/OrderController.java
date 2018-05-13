@@ -227,7 +227,7 @@ public class OrderController {
 
 
 	/**
-	 * 通过用户id获取商家的已打印的订单
+	 * 通过用户id 获取商家的已打印的订单
 	 * @return
 	 */
 	@RequestMapping(value="/typed/{userId}", method=RequestMethod.GET, produces="application/json;charset=UTF-8")

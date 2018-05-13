@@ -161,4 +161,21 @@ public class BBulkOrder {
 
         return bBulkOrder;
     }
+
+    @Override
+    public String toString() {
+        return "BBulkOrder{" +
+                "start=" + start +
+                ", orderNumber=" + orderNumber +
+                ", bulkId=" + bulkId +
+                ", padding0=" + padding0 +
+                ", seconds=" + seconds +
+                ", checkSum=" + checkSum +
+                ", urg=" + urg +
+                ", data=" + Arrays.toString(data) +
+                ", padding1=" + padding1 +
+                ", end=" + end +
+                ", size=" + size +
+                '}';
+    }
 }
