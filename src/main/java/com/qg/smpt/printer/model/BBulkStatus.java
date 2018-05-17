@@ -14,7 +14,7 @@ public final class BBulkStatus extends AbstactStatus{
     public int   printerId;
     
     public static BBulkStatus bytesToBulkStatus(byte[] bytes) {
-        if (bytes.length != 20) {
+        if (bytes.length != 28) {
             return null;
         }
 
@@ -24,9 +24,9 @@ public final class BBulkStatus extends AbstactStatus{
 
         bbs.flag = status.flag;
 
-        bbs.bulkId = (short)(status.line3 & 0xFFFF);
+        bbs.padding = (short)(status.line3 & 0xFFFF);
 
-        bbs.padding = (short)((status.line3 >> 16) & 0xFFFF);
+        bbs.bulkId = (short)((status.line3 >> 16) & 0xFFFF);
 
         bbs.seconds = status.line2;
 

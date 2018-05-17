@@ -21,7 +21,6 @@ import com.qg.smpt.web.service.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 public class LoginController {
@@ -64,20 +63,13 @@ public class LoginController {
 	}
 	
 	
-	@RequestMapping(value="/login", method=RequestMethod.POST, produces="application/html;charset=utf-8" )
-	@ResponseBody
-	public String login(@RequestBody Map<String,String> map) {
-		int retcode = Constant.FALSE;
-		if (!map.containsKey("account")||!map.containsKey("password")){
-			return JsonUtil.jsonToMap(new String[]{"retcode"}, new String[]{String.valueOf(retcode)});
-		}
-		String userAccount = map.get("account");
-		String userPassword = map.get("password");
+	@RequestMapping(value="/login", method=RequestMethod.GET, produces="application/html;charset=utf-8" )
+	public String login(String userAccount, String userPassword, HttpServletRequest request, HttpServletResponse response) {
 		User user = installUser(userAccount, userPassword);
 		
 		// check the login infomation is correct
 		if(!checkInput(user)){
-			return JsonUtil.jsonToMap(new String[]{"retcode"}, new Object[]{retcode});
+			 return "redirect:/webContent/index.html";
 		}
 		
 		// run the login method.
@@ -91,6 +83,8 @@ public class LoginController {
 		// check the login status
 		// if success, store the user
 		if(status.equals(Constant.SUCCESS)) {
+			 HttpSession session = request.getSession();
+			 session.setAttribute("user", loginUser);
 
 			loginUser.getLogoB();
 			LOGGER.debug("该用户的id为" + loginUser.getId().toString());
@@ -105,10 +99,15 @@ public class LoginController {
 			ShareMem.userOrderBufferMap.put(loginUser.getId(), orders);
 //			ShareMem.userIdOrdersDispatcher.put(loginUser.getId(),ordersDispatcher);
 
-			JsonUtil.jsonToMap(new String[]{"retcode","userId"}, new Object[]{retcode, loginUser.getId().toString()});
+			Cookie cookie = new Cookie("user_id", loginUser.getId().toString());
+			cookie.setPath("/");
+			response.addCookie(cookie);
+
+			 return "redirect:/html/order_index.html?userId=" + loginUser.getId();
 			 
+		}else{
+			 return "redirect:/index.html";
 		}
-		return JsonUtil.jsonToMap(new String[]{"retcode"}, new Object[]{retcode});
 		
 	}
 	

@@ -175,7 +175,7 @@ public class Compact {
         //缓存存入经过筛选参与合同网的打印机
         List<Printer> compactOfPrinter = ShareMem.compactOfPrinter.get((short)compactNumber);
         if (compactOfPrinter==null) {
-            compactOfPrinter = new ArrayList<Printer>();
+            compactOfPrinter = new ArrayList<>();
             ShareMem.compactOfPrinter.put((short) compactNumber, compactOfPrinter);
         }
         int capacity = 0;
@@ -501,6 +501,7 @@ public class Compact {
         Printer printer = ShareMem.printerIdMap.get(printerId);      //获取打印机对象
         //todo
         if (printer.getBufferSize() == null) printer.setBufferSize((short) 5120);
+
         while (orders.size() != 0) {
             //批次订单对象
             BulkOrder bOrders = new BulkOrder(new ArrayList<BOrder>());
@@ -524,7 +525,6 @@ public class Compact {
                     bOrder.inNumber = (short) bOrders.getOrders().size();
                     //为订单设置打印机
                     order.setMpu(printer.getId());
-//                    order.setMpu(1);
                     orderList.add(order);
                 }
                 orders.removeAll(orderList);
@@ -534,7 +534,7 @@ public class Compact {
                     orders.size(), bOrders.getId(), bOrders.getDataSize());
 
 
-//            存入已发送队列
+            //存入已发送队列
             synchronized (ShareMem.priSentQueueMap.get(printer)) {
                 List<BulkOrder> bulkOrderList = ShareMem.priSentQueueMap.get(printer);
                 if (bulkOrderList == null) {
@@ -546,10 +546,7 @@ public class Compact {
 
             //引用以前的批次报文，但是只用里边的data属性，data即是这个批次的订单报文数据
             BBulkOrder bBulkOrder = BulkOrder.convertBBulkOrder(bOrders, false);
-            System.out.println(bOrders);
-            LOGGER.log(Level.DEBUG, "第一个订单的数据 [{0}] 为",bBulkOrder.toString());
             byte[] bBulkOrderBytes = BBulkOrder.bBulkOrderToBytes(bBulkOrder);
-            LOGGER.log(Level.DEBUG, "第一个订单的字节 [{0}] 为",bBulkOrderBytes);
 
             try {
                 SocketChannel socketChannel = ShareMem.priSocketMap.get(printer);
