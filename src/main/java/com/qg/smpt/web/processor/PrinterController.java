@@ -196,35 +196,58 @@ public class PrinterController {
      * 查询订单接口
      * @return
      */
-    @RequestMapping(value="/show/menu",  method=RequestMethod.POST ,produces="application/json;charset=UTF-8")
+    @RequestMapping(value="/show/menu/{orderId}",  method=RequestMethod.POST ,produces="application/json;charset=UTF-8")
     @ResponseBody
-    public String showMenu(){
+    public String showMenu(@PathVariable int orderId){
         List<Map<String,Object>> menuList = new ArrayList<>();
-        Item item;
-        for (Integer key:ShareMem.itemToShow.keySet()) {
-            item = ShareMem.itemToShow.get(key);
-            Map<String,Object> menuDetail = new HashMap<>();
-            menuDetail.put("number",key);
-            menuDetail.put("time",item.getOrderTime());
-            menuDetail.put("good",item.getName());
-            menuDetail.put("price",item.getPrice());
-            menuDetail.put("count",item.getCount());
-            menuList.add(menuDetail);
+        List<Item> items = new ArrayList<>();
+        if (orderId == 0){
+            for (Integer key:ShareMem.itemToShow.keySet()) {
+                items = ShareMem.itemToShow.get(key);
+            }
+        }else {
+            items = ShareMem.itemToShow.get(orderId);
         }
+            for (Item item : items) {
+                Map<String, Object> menuDetail = new HashMap<>();
+                menuDetail.put("number", orderId);
+                menuDetail.put("time", item.getOrderTime());
+                menuDetail.put("good", item.getName());
+                menuDetail.put("price", item.getPrice());
+                menuDetail.put("count", item.getCount());
+                menuList.add(menuDetail);
+            }
         String json =  JsonUtil.jsonToMap(new String[]{"retcode","data"},
                 new Object[]{Constant.TRUE,menuList});
         return json;
     }
 
-    @RequestMapping(value="/show/batch",  method=RequestMethod.POST ,produces="application/json;charset=UTF-8")
+    /**
+     * 查询批次接口
+     * @return
+     */
+    @RequestMapping(value="/show/batch/{batchId}",  method=RequestMethod.POST ,produces="application/json;charset=UTF-8")
     @ResponseBody
-    public String showBatch(){
+    public String showBatch(@PathVariable int batchId){
         List<Map<String,Object>> batchList = new ArrayList<>();
         BulkOrder bulkOrder;
+        Map<String,Object> batchDetail = new HashMap<>();
+        if (batchId == 0){
         for (Integer key:ShareMem.bulkOrderToShow.keySet()){
             bulkOrder = ShareMem.bulkOrderToShow.get(key);
-            Map<String,Object> batchDetail = new HashMap<>();
             batchDetail.put("number",bulkOrder.getId());
+            batchDetail.put("sendTime",bulkOrder.getSendTimeToShow());
+            List<Integer> ordersId = new ArrayList<>();
+            for (int i = 0;i<bulkOrder.getOrders().size();i++){
+                ordersId.add(bulkOrder.getOrders().get(i).getId());
+            }
+            batchDetail.put("orderId",ordersId);
+            batchDetail.put("orderNum",bulkOrder.getReceNum());
+            batchList.add(batchDetail);
+        }
+        }else {
+            bulkOrder = ShareMem.bulkOrderToShow.get(batchId);
+            batchDetail.put("number",batchId);
             batchDetail.put("sendTime",bulkOrder.getSendTimeToShow());
             List<Integer> ordersId = new ArrayList<>();
             for (int i = 0;i<bulkOrder.getOrders().size();i++){

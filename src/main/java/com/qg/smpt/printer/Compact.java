@@ -497,7 +497,8 @@ public class Compact {
      * @param orders
      */
     public void sendByPrinter(int printerId,List<Order> orders) {
-        if(ShareMem.systemStatus.get("typesSum") != null){
+        ShareMem.systemStatus.put("isTyping","正在打印中");
+        if(ShareMem.systemStatus.get("typesSum") == null){
             ShareMem.systemStatus.put("typesSum",orders.size());
         }else {
             ShareMem.systemStatus.put("typesSum",orders.size()+(Integer)ShareMem.systemStatus.get("typesSum"));

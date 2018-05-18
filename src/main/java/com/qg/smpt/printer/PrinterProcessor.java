@@ -515,6 +515,7 @@ public class PrinterProcessor implements Runnable, Lifecycle{
         printer.setUserId(userId);
         printer.setConnected(true);
         printer.setCurrentBulk(0);
+        printer.setPrinterUnitSize(3);
         // TODO 如果有两个线程同时向 HashMap中添加相同printerId， 是否会出现重复问题
 
         synchronized (ShareMem.printerIdMap) {

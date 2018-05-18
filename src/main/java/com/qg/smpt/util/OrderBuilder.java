@@ -223,9 +223,7 @@ public class OrderBuilder {
 		}
 		order.setItems(items);
 		//将下单的订单保存起来，用于前端展示
-		for (Item item:items) {
-			ShareMem.itemToShow.put(order.getId(), item);
-		}
+		ShareMem.itemToShow.put(order.getId(), items);
 		LOGGER.log(Level.DEBUG,"items is " + items + "and size is " + size,OrderBuilder.class);
 		//生成其他付费信息
 		order.setOrderMealFee(getMealCost());

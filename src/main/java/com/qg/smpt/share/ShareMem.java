@@ -90,7 +90,7 @@ public final class ShareMem {
     /**
      * 订单展示：订单Id-正在打印的订单
      */
-    public static Map<Integer,Item> itemToShow;
+    public static Map<Integer,List<Item>> itemToShow;
 
     /**
      * 批次展示：批次Id-批次内信息
