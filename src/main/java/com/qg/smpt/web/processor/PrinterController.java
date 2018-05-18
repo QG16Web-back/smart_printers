@@ -107,7 +107,7 @@ public class PrinterController {
      * 系统状态提醒展示
      * @return
      */
-    @RequestMapping(value = "/system/status",method=RequestMethod.POST ,produces="application/json;charset=UTF-8")
+    @RequestMapping(value = "/system/status",method=RequestMethod.GET,produces="application/json;charset=UTF-8")
     @ResponseBody
     public String systemStatus(){
         int printersSum = ShareMem.printerIdMap.size();
@@ -139,7 +139,7 @@ public class PrinterController {
      * 展示所有主控板的接口
      * @return
      */
-    @RequestMapping(value = "/system/showprinters",method=RequestMethod.POST ,produces="application/json;charset=UTF-8")
+    @RequestMapping(value = "/system/showprinters",method=RequestMethod.GET ,produces="application/json;charset=UTF-8")
     @ResponseBody
     public String showPrinter(){
         List<Map<String,Object>> printersStatus = new ArrayList<>();
@@ -150,7 +150,7 @@ public class PrinterController {
             if(ShareMem.printerIdMap.get(key).getPrinterStatus() == null){
                 printerStatus.put("printerStatus","打印机正常");
             }else {
-                printerStatus.put("printerStatus",ShareMem.printerIdMap.get(key).getPrinterStatus());
+                printerStatus.put("printerStatus","打印机正常");
             }
             if (ShareMem.printerIdMap.get(key).getPrinterUnitSize() == null) {
                 printerStatus.put("unitsSum", 0);
