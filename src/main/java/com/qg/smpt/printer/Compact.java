@@ -502,6 +502,10 @@ public class Compact {
         //todo
         if (printer.getBufferSize() == null) printer.setBufferSize((short) 5120);
 
+        if(printer.getLastSendTime() == 0){
+            printer.setFirstSendTime(System.currentTimeMillis());
+        }
+
         while (orders.size() != 0) {
             //批次订单对象
             BulkOrder bOrders = new BulkOrder(new ArrayList<BOrder>());
@@ -516,25 +520,24 @@ public class Compact {
                     if (bOrders.getDataSize() + bOrder.size > printer.getBufferSize()) break;
 
                     bOrders.getbOrders().add(bOrder);
-                    if (bOrders.getbOrders().size() > 1)
-                    System.out.println("!!!picineixuhao" + bOrders.getbOrders().get(1).getInNumber());
                     bOrders.getOrders().add(order);
                     //更新所有订单的字节数（不包括批次报文）
                     bOrders.setDataSize(bOrders.getDataSize() + bOrder.size);
                     //设置所属批次
                     bOrder.bulkId = (short) printer.getCurrentBulk();
                     //设置批次内的序号
-                    bOrder.inNumber = (short) (bOrders.getOrders().size()-1);
+                    bOrder.inNumber = (short) bOrders.getOrders().size();
                     //为订单设置打印机
                     order.setMpu(printer.getId());
                     orderList.add(order);
                 }
+                bOrders.setSendTimeToShow(new Date());
                 orders.removeAll(orderList);
             }
             LOGGER.log(Level.DEBUG, "为打印机 [{0}] 分配任务, 订单缓冲队列 [{1}]，" +
                             "批次号为 [{2}], 最后批次订单容量 [{3}] byte", printer.getId(),
                     orders.size(), bOrders.getId(), bOrders.getDataSize());
-
+            printer.setLastSendTime(System.currentTimeMillis());
 
             //存入已发送队列
             synchronized (ShareMem.priSentQueueMap.get(printer)) {
@@ -545,18 +548,15 @@ public class Compact {
                 }
                 bulkOrderList.add(bOrders);
             }
+            synchronized (ShareMem.bulkOrderToShow.get(bOrders.getId())){
+                if (ShareMem.bulkOrderToShow.get(bOrders.getId()) == null) {
+                    ShareMem.bulkOrderToShow.put(bOrders.getId(), bOrders);
+                }
+            }
 
             //引用以前的批次报文，但是只用里边的data属性，data即是这个批次的订单报文数据
-//            System.out.println("maxpicineixuhao + " + bOrders.getbOrders().get(bOrders.getbOrders().size()-1).getInNumber());
             BBulkOrder bBulkOrder = BulkOrder.convertBBulkOrder(bOrders, false);
             byte[] bBulkOrderBytes = BBulkOrder.bBulkOrderToBytes(bBulkOrder);
-            StringBuilder hexString = new StringBuilder();
-            for (int i = 0;i < bBulkOrderBytes.length; i++){
-                if ((bBulkOrderBytes[i] & 0xff) < 0x10)
-                    hexString.append("0");
-                hexString.append(Integer.toHexString(0xFF & bBulkOrderBytes[i]));
-            }
-            LOGGER.log(Level.DEBUG,"发放任务 data is" + hexString.toString().toLowerCase() + ">>>>>>>>");
 
             try {
                 SocketChannel socketChannel = ShareMem.priSocketMap.get(printer);

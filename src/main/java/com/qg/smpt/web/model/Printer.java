@@ -18,6 +18,8 @@ public final class Printer {
     private volatile int currentOrder;       //当前已接受订单的最大id
     private volatile boolean canAccept;      //能否接收数据
     private volatile boolean isBusy;         //true-忙时，false-闲时
+    //第一次打印时间
+    private volatile long firstSendTime;
     private volatile long lastSendTime;      //上一次发送批次的时间
     private boolean connected = false;       // 是否建立连接
 
@@ -32,8 +34,24 @@ public final class Printer {
     private Short speed;            //  打印速度/打印能力
     private Double price;           //  打印代价
     private Short bufferSize;     //主控板缓冲区大小
+    //主控板所拥有的打印机单元数
+    private Integer printerUnitSize;
 
+    public long getFirstSendTime() {
+        return firstSendTime;
+    }
 
+    public void setFirstSendTime(long firstSendTime) {
+        this.firstSendTime = firstSendTime;
+    }
+
+    public Integer getPrinterUnitSize() {
+        return printerUnitSize;
+    }
+
+    public void setPrinterUnitSize(Integer printerUnitSize) {
+        this.printerUnitSize = printerUnitSize;
+    }
 
     public Short getBufferSize() {
         return bufferSize;
@@ -115,8 +133,8 @@ public final class Printer {
         this.successRate = successRate;
     }
 
-    public Printer() {this.currentBulk = 0;}
-    public Printer(int id){this.id = id;this.currentBulk = 0;}
+    public Printer() {this.currentBulk = 0;this.lastSendTime = 0;this.firstSendTime = 0;this.printerStatus = "主控板处于健康状态";}
+    public Printer(int id){this.id = id;this.currentBulk = 0;this.lastSendTime = 0;this.firstSendTime = 0;this.printerStatus = "主控板处于健康状态";}
 
     public void increaseErrorNum(int num) {
         this.printErrorNum += num;

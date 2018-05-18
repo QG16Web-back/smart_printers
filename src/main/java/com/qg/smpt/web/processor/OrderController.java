@@ -227,7 +227,7 @@ public class OrderController {
 
 
 	/**
-	 * 通过用户id获取商家的已打印的订单
+	 * 通过用户id 获取商家的已打印的订单
 	 * @return
 	 */
 	@RequestMapping(value="/typed/{userId}", method=RequestMethod.GET, produces="application/json;charset=UTF-8")
@@ -240,8 +240,21 @@ public class OrderController {
 
 		LOGGER.log(Level.DEBUG, "正在查询 用户[{0}] 的已打印订单", userId);
 
+		User user = ShareMem.userIdMap.get(userId);
+		List<Printer> printers = null;
+		if(user != null) {
+			printers = user.getPrinters();
+		}
+		if(!checkNormal(printers)) {
+			LOGGER.log(Level.DEBUG, "当前用户[{0}]没有打印机设备连入", userId);
+			return JsonUtil.jsonToMap(new String[]{"retcode","data"},
+					new String[]{String.valueOf(Constant.TRUE),"[]"});
+		}
+
+		// install orderHasType
+		List<Order> orderHasType = installOrdersHasPrinter(printers);
+
 		// 根据用户id获取订单
-		List<Order> orderList = new ArrayList<>();
 		Order order1 = new Order();
 		order1.setId(1);
 		order1.setOrderStatus("1");
@@ -257,21 +270,19 @@ public class OrderController {
 		Order order5 = new Order();
         order5.setId(5);
         order5.setOrderStatus("5");
-		orderList.add(order1);
-        orderList.add(order2);
+		orderHasType.add(order1);
+		orderHasType.add(order2);
 
-        orderList.add(order3);
-        orderList.add(order4);
-        orderList.add(order5);
+		orderHasType.add(order3);
+		orderHasType.add(order4);
+		orderHasType.add(order5);
 
 		String json =  JsonUtil.jsonToMap(new String[]{"retcode","data"},
-				new Object[]{Constant.TRUE,orderList});
+				new Object[]{Constant.TRUE,orderHasType});
 
 		LOGGER.log(Level.DEBUG, "当前转化的信息为 [{0}]", json);
 
 		return json;
-
-
 	}
 
 
@@ -322,6 +333,7 @@ public class OrderController {
 	}
 
 
+
 	/**
 	 * 检查打印机集合是否为空
 	 * @param printers 打印机集合
@@ -334,6 +346,30 @@ public class OrderController {
 		return true;
 	}
 
+	/**
+	 * 获取打印机集合中已打印订单
+	 * @param printers 打印机集合
+	 * @return	已打印订单集合
+	 */
+	private List<Order> installOrdersHasPrinter(List<Printer> printers) {
+		List<Order> orderList;
+		List<Order> orderHasType = new ArrayList<>();
+		//已发送的批次集合
+		List<BulkOrder> bulkHasSend = null;
+		// foreach printers to install orderList
+		for(Printer p : printers) {
+			bulkHasSend = ShareMem.priSentQueueMap.get(p);
+
+			// filling hasType orders
+			if (bulkHasSend != null) {
+				for (BulkOrder bulk : bulkHasSend) {
+					orderList = bulk.getOrders();
+					fillOrders(orderList,orderHasType);
+				}
+			}
+		}
+		return orderHasType;
+	}
 	/**
 	 * 获取打印机集合中未打印订单和正在打印订单,全部组装到一个订单集合中
 	 * @param printers 打印机集合

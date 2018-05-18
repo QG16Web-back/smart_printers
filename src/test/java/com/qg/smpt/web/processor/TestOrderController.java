@@ -130,36 +130,37 @@ public class TestOrderController {
 	@Ignore
 	@Test
 	public void testBuyOrder() {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("{\"company\":\"美团外卖\",");
-		buffer.append("\"orderTime\":\"2016-7-29 18:30:00\",");
-		buffer.append("\"expectTime\":\"18:30\",");
-		buffer.append("\"orderRemark\":\"加饭\",");
-		buffer.append("\"orderMealFee\":\"3\",");
-		buffer.append("\"orderDisFee\":\"3\",");
-		buffer.append("\"orderPreAmount\":\"3\",");
-		buffer.append("\"orderPayStatus\":\"已付款\",");
-		buffer.append("\"userName\":\"梁碧如\",");
-		buffer.append("\"userAddress\":\"华南农业大学\",");
-		buffer.append("\"userTelephone\":\"18819255400\",");
-		buffer.append("\"items\":[");
-		
-		buffer.append("{\"name\":\"炒猪肉\",\"price\":\"8\",\"count\":\"3\"},");
-		buffer.append("{\"name\":\"蒸饺子\",\"price\":\"7\",\"count\":\"2\"},");
-		buffer.append("{\"name\":\"火龙果\",\"price\":\"4\",\"count\":\"3\"}");
-		buffer.append("]}");
-		
-		System.out.println(buffer.toString());
-		
-		Order order = (Order)JsonUtil.jsonToObject(buffer.toString(), Order.class);
-//		System.out.println(order);
-//		System.out.println(order.toString());]
-		System.out.println(order.toString());
-	}
+//		StringBuffer buffer = new StringBuffer();
+//		buffer.append("{\"company\":\"美团外卖\",");
+//		buffer.append("\"orderTime\":\"2016-7-29 18:30:00\",");
+//		buffer.append("\"expectTime\":\"18:30\",");
+//		buffer.append("\"orderRemark\":\"加饭\",");
+//		buffer.append("\"orderMealFee\":\"3\",");
+//		buffer.append("\"orderDisFee\":\"3\",");
+//		buffer.append("\"orderPreAmount\":\"3\",");
+//		buffer.append("\"orderPayStatus\":\"已付款\",");
+//		buffer.append("\"userName\":\"梁碧如\",");
+//		buffer.append("\"userAddress\":\"华南农业大学\",");
+//		buffer.append("\"userTelephone\":\"18819255400\",");
+//		buffer.append("\"items\":[");
+//
+//		buffer.append("{\"name\":\"炒猪肉\",\"price\":\"8\",\"count\":\"3\"},");
+//		buffer.append("{\"name\":\"蒸饺子\",\"price\":\"7\",\"count\":\"2\"},");
+//		buffer.append("{\"name\":\"火龙果\",\"price\":\"4\",\"count\":\"3\"}");
+//		buffer.append("]}");
+//
+//		System.out.println(buffer.toString());
+//
+//		Order order = (Order)JsonUtil.jsonToObject(buffer.toString(), Order.class);
+////		System.out.println(order);
+////		System.out.println(order.toString());]
+//		System.out.println(order.toString());
+//	}
 
 //	@Test
 //	public void testSearchOrder() {
 //		System.out.println(orderController.searchOrder(1,1));
 //	}
-
+		return;
+	}
 }

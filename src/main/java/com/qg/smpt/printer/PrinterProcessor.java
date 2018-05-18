@@ -4,10 +4,7 @@ import com.qg.smpt.printer.model.*;
 import com.qg.smpt.receive.ReceOrderServlet;
 import com.qg.smpt.share.ShareMem;
 import com.qg.smpt.util.*;
-import com.qg.smpt.web.model.BulkOrder;
-import com.qg.smpt.web.model.Order;
-import com.qg.smpt.web.model.Printer;
-import com.qg.smpt.web.model.User;
+import com.qg.smpt.web.model.*;
 import com.qg.smpt.web.repository.CompactMapper;
 import com.qg.smpt.web.repository.OrderMapper;
 import com.qg.smpt.web.repository.PrinterMapper;
@@ -905,10 +902,7 @@ public class PrinterProcessor implements Runnable, Lifecycle{
             bulkOrder.getOrders().addAll(orderList);
             bulkOrder.setDataSize(totalSize);
 
-            /* 转化发送批次订单数据 */
-            byte[] bBulkOrderByters = BBulkOrder.bBulkOrderToBytes(BulkOrder.convertBBulkOrder(bulkOrder, false));
-            // bBulkOrderByters[15] = (byte)0x1;
-            LOGGER.log(Level.DEBUG, "打印机 [{0}] 重新发送批次转移订单 当前线程 [{1}]", bOrderStatus.printerId, this.id);
+
 //            DebugUtil.printBytes(bBulkOrderByters);
 
             SqlSession sqlSession = sqlSessionFactory.openSession();
@@ -941,6 +935,11 @@ public class PrinterProcessor implements Runnable, Lifecycle{
 //                }
 
                 if (printerChannel != null && printerChannel != socketChannel) {
+                    /* 转化发送批次订单数据 */
+                    byte[] bBulkOrderByters = BBulkOrder.bBulkOrderToBytes(BulkOrder.convertBBulkOrder(bulkOrder, false));
+                    // bBulkOrderByters[15] = (byte)0x1;
+                    LOGGER.log(Level.DEBUG, "打印机 [{0}] 重新发送批次转移订单 当前线程 [{1}]", bOrderStatus.printerId, this.id);
+
                     // 重置打印机出错次数
 //                    user.resetErrorNum();
                     // 直接发送到信任度最高的打印机
@@ -950,8 +949,10 @@ public class PrinterProcessor implements Runnable, Lifecycle{
 //                    if (user.getErrorNum() == 3) {
 //                        return;
 //                    }
-                    // 如果找不到打印机或者只有一台打印机的情况，直接按照原路返回
-                    socketChannel.write(ByteBuffer.wrap(bBulkOrderByters));
+                      List<BulkOrder> bufferMapList = ShareMem.priBufferMapList.get(printer);
+                      bufferMapList.add(bulkOrder);
+
+//                    socketChannel.write(ByteBuffer.wrap(bBulkOrderByters));
                 }
 
             } catch (IOException e) {
@@ -1160,24 +1161,62 @@ public class PrinterProcessor implements Runnable, Lifecycle{
         LOGGER.log(Level.DEBUG, "打印机[{0}] 请求flag [{1}] 时间戳 [{2}] 打印单元序号 [{3}] 检验和 [{4}] 当前线程 [{5}]",
                 bPrinterStatus.printerId, bPrinterStatus.flag, bPrinterStatus.seconds, bPrinterStatus.number, bPrinterStatus.checkSum, this.id);
 
+        //打印机单元编号
+        int printerUnitId = bPrinterStatus.printerId * 10 + bPrinterStatus.number;
         Printer printer = ShareMem.printerIdMap.get(bPrinterStatus.printerId);
         if (printer == null) {
             LOGGER.log(Level.WARN, "打印机[{0}]未找到内中中对应打印机对象", bPrinterStatus.printerId);
             return ;
         }
         LOGGER.log(Level.DEBUG, ((bPrinterStatus.flag ) + "打印机状态" ));
-        LOGGER.log(Level.DEBUG, ((bPrinterStatus.flag ) & 0xFF) + "打印机状态&&" ) ;
-        if (((bPrinterStatus.flag ) & 0xFF) == 14){
-            LOGGER.log(Level.DEBUG,"health");
+        LOGGER.log(Level.DEBUG, ((bPrinterStatus.flag ) & 0xFF) + "打印机状态&&" );
 
-        }else if(((bPrinterStatus.flag ) & 0xFF) == 15){
-            LOGGER.log(Level.DEBUG,"middleHealth");
-        }else {
-            LOGGER.log(Level.DEBUG,"notHealth");
+        int size = 0;
+        //用最新的打印机状态来更新主控板状态
+        synchronized (printer){
+            if (((bPrinterStatus.flag) & 0xFF) == 14) {
+                printer.setPrinterStatus("主控板处于健康状态");
+            } else if (((bPrinterStatus.flag) & 0xFF) == 15) {
+                printer.setPrinterStatus("主控板处于亚健康状态");
+            } else {
+                printer.setPrinterStatus("主控板处于不健康状态");
+            }
+            size = printer.getPrinterUnitSize();
+            //如果打印单元序号大过size，则更新主控板下打印单元的size
+            if (size < bPrinterStatus.number) {
+                printer.setPrinterUnitSize(bPrinterStatus.number);
+            }
+        }
+        synchronized (ShareMem.printerUnitStatusMap.get(printerUnitId)){
+            if (ShareMem.printerUnitStatusMap.get(printerUnitId) == null) {
+                PrinterUnitDetail printerUnitDetail = new PrinterUnitDetail();
+                printerUnitDetail.setId(printerUnitId);
+                printerUnitDetail.setPrinterId(bPrinterStatus.printerId);
+                if (((bPrinterStatus.flag) & 0xFF) == 14) {
+                    printerUnitDetail.setPrinterUnitStatus("打印机处于健康状态");
+                } else if (((bPrinterStatus.flag) & 0xFF) == 15) {
+                    printerUnitDetail.setPrinterUnitStatus("打印机处于亚健康状态");
+                } else {
+                    printerUnitDetail.setPrinterUnitStatus("打印机处于不健康状态");
+                }
+                ShareMem.printerUnitStatusMap.put(printerUnitId, printerUnitDetail);
+            }
+        else {
+            PrinterUnitDetail printerUnitDetail = ShareMem.printerUnitStatusMap.get(printerUnitId);
+            printerUnitDetail.setId(printerUnitId);
+            printerUnitDetail.setPrinterId(bPrinterStatus.printerId);
+                if (((bPrinterStatus.flag) & 0xFF) == 14) {
+                    printerUnitDetail.setPrinterUnitStatus("打印机处于健康状态");
+                } else if (((bPrinterStatus.flag) & 0xFF) == 15) {
+                    printerUnitDetail.setPrinterUnitStatus("打印机处于亚健康状态");
+                } else {
+                    LOGGER.log(Level.DEBUG, "notHealth");
+                    printerUnitDetail.setPrinterUnitStatus("打印机处于不健康状态");
+                }
         }
         printer.setPrinterStatus( ( (bPrinterStatus.flag ) & 0xFF ) + "打印机状态");
     }
-
+    }
     /* getter 模块 */
     public int getId() {
         return id;

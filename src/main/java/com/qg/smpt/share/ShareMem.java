@@ -2,6 +2,7 @@ package com.qg.smpt.share;
 
 import com.qg.smpt.printer.OrdersDispatcher;
 import com.qg.smpt.printer.PrinterProcessor;
+import com.qg.smpt.printer.model.BPrinterStatus;
 import com.qg.smpt.web.model.*;
 import com.qg.smpt.web.repository.OrderMapper;
 import org.apache.ibatis.io.Resources;
@@ -74,6 +75,34 @@ public final class ShareMem {
 
     public static Map<Integer, OrdersDispatcher> userIdOrdersDispatcher = null;   //用户id和对应的订单委派调度线程
 
+    /**
+     * 前端所需展示状态的各种共享变量信息
+     */
+
+    /**
+     * 主控板状态：主控板id-主控板信息
+     */
+    public static Map<Integer,Printer> printerStatusMap;
+    /**
+     * 打印机单元状态：打印机单元id-打印机单元信息
+     */
+    public static Map<Integer,PrinterUnitDetail> printerUnitStatusMap;
+    /**
+     * 订单展示：订单Id-正在打印的订单
+     */
+    public static Map<Integer,Item> itemToShow;
+
+    /**
+     * 批次展示：批次Id-批次内信息
+     */
+    public static Map<Integer,BulkOrder> bulkOrderToShow;
+
+    /**
+     * 系统状态
+     */
+    public static Map<String,Object> systemStatus;
+
+
     static {
         // 初始化订单ID
         initOrderId();
@@ -103,6 +132,16 @@ public final class ShareMem {
         userIdOrdersDispatcher = new HashMap<Integer,OrdersDispatcher>();
 
         compactOfPrinter = new HashMap<Short, List<Printer>>();
+
+        itemToShow = new HashMap<>();
+
+        bulkOrderToShow = new HashMap<>();
+
+        printerStatusMap = new HashMap<>();
+
+        printerUnitStatusMap = new HashMap<>();
+
+        systemStatus = new HashMap<>();
     }
 
     private static void initOrderId() {

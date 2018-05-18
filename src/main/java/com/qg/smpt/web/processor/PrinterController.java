@@ -10,7 +10,7 @@ import javax.servlet.http.HttpSession;
 
 import com.qg.smpt.printer.Compact;
 import com.qg.smpt.util.OrderBuilder;
-import com.qg.smpt.web.model.Constant;
+import com.qg.smpt.web.model.*;
 import com.qg.smpt.web.model.Json.PrinterDetail;
 import com.qg.smpt.web.repository.PrinterMapper;
 import com.qg.smpt.web.repository.UserMapper;
@@ -26,9 +26,6 @@ import com.qg.smpt.share.ShareMem;
 import com.qg.smpt.util.JsonUtil;
 import com.qg.smpt.util.Level;
 import com.qg.smpt.util.Logger;
-import com.qg.smpt.web.model.Order;
-import com.qg.smpt.web.model.Printer;
-import com.qg.smpt.web.model.User;
 import com.qg.smpt.web.service.UserService;
 
 @Controller
@@ -52,8 +49,6 @@ public class PrinterController {
 //		HttpSession session = request.getSession();
 //		User user = (User) session.getAttribute("user");
 //		int userId = ((user != null) ? user.getId() : 0);
-
-
         LOGGER.log(Level.DEBUG, "查看用户[{0}]的打印机状态 ", userId);
 
         // 根据用户id获取打印机
@@ -108,6 +103,119 @@ public class PrinterController {
         return JsonUtil.jsonToMap(new String[]{"status"}, new Object[]{"SUCCESS"});
     }
 
+    /**
+     * 系统状态提醒展示
+     * @return
+     */
+    @RequestMapping(value = "/system/status",method=RequestMethod.POST ,produces="application/json;charset=UTF-8")
+    @ResponseBody
+    public String systemStatus(){
+        int printersSum = ShareMem.printerIdMap.size();
+        int unitsSum = ShareMem.printerUnitStatusMap.size();
+        Map<String,Object> systemStatus = new HashMap<>();
+        systemStatus.put("printersSum",printersSum);
+        systemStatus.put("unitsSum",unitsSum);
+        systemStatus.put("typesSum",ShareMem.systemStatus.get("typesSum"));
+        systemStatus.put("isTyping",ShareMem.systemStatus.get("isTyping"));
+        systemStatus.put("errorRate",0.1);
+        systemStatus.put("handlingCapacity",300);
+        String json =  JsonUtil.jsonToMap(new String[]{"retcode","data"},
+                new Object[]{Constant.TRUE,systemStatus});
+        return json;
+    }
+
+    /**
+     * 展示所有主控板的接口
+     * @return
+     */
+    @RequestMapping(value = "/system/showprinters",method=RequestMethod.POST ,produces="application/json;charset=UTF-8")
+    @ResponseBody
+    public String showPrinter(){
+        List<Map<String,Object>> printersStatus = new ArrayList<>();
+        int i;
+        for (i=0;i<ShareMem.printerIdMap.size();i++) {
+            Map<String,Object> printerStatus = new HashMap<>(3);
+            printerStatus.put("printerId", ShareMem.printerIdMap.get(i).getId());
+            printerStatus.put("printerStatus",ShareMem.printerIdMap.get(i).getPrinterStatus());
+            printerStatus.put("unitsSum",ShareMem.printerIdMap.get(i).getPrinterUnitSize());
+            printersStatus.add(printerStatus);
+        }
+        String json =  JsonUtil.jsonToMap(new String[]{"retcode","data"},
+                new Object[]{Constant.TRUE,printersStatus});
+        return json;
+    }
+
+    /**
+     * 查看主控板信息
+     * @param printerId
+     * @return
+     */
+    @RequestMapping(value="/system/printerdetail/{printerId}",  method=RequestMethod.POST ,produces="application/json;charset=UTF-8")
+    @ResponseBody
+    public String showPrinterDetail(@PathVariable int printerId){
+        Map<String,Object> printerDetail = new HashMap<>();
+        Printer printer = ShareMem.printerIdMap.get(printerId);
+        if (printer == null){
+            return JsonUtil.jsonToMap(new String[]{"status"}, new Object[]{"EMPTY"});
+        }
+        long hasTypedTime = printer.getLastSendTime()-printer.getFirstSendTime();
+        printerDetail.put("hasTypedTime",hasTypedTime/1000 + "秒");
+        printerDetail.put("printerStatus",printer.getPrinterStatus());
+        printerDetail.put("orderSum",printer.getOredrsNum());
+        printerDetail.put("cutSum",108);
+        printerDetail.put("cunErrorSum",12);
+        String json =  JsonUtil.jsonToMap(new String[]{"retcode","data"},
+                new Object[]{Constant.TRUE,printerDetail});
+        return json;
+    }
+
+    /**
+     * 查询订单接口
+     * @return
+     */
+    @RequestMapping(value="/show/menu",  method=RequestMethod.POST ,produces="application/json;charset=UTF-8")
+    @ResponseBody
+    public String showMenu(){
+        List<Map<String,Object>> menuList = new ArrayList<>();
+        Item item;
+        for (Integer key:ShareMem.itemToShow.keySet()) {
+            item = ShareMem.itemToShow.get(key);
+            Map<String,Object> menuDetail = new HashMap<>();
+            menuDetail.put("number",key);
+            menuDetail.put("time",item.getOrderTime());
+            menuDetail.put("good",item.getName());
+            menuDetail.put("price",item.getPrice());
+            menuDetail.put("number",item.getCount());
+            menuList.add(menuDetail);
+        }
+        String json =  JsonUtil.jsonToMap(new String[]{"retcode","data"},
+                new Object[]{Constant.TRUE,menuList});
+        return json;
+    }
+
+    @RequestMapping(value="/show/batch",  method=RequestMethod.POST ,produces="application/json;charset=UTF-8")
+    @ResponseBody
+    public String showBatch(){
+        List<Map<String,Object>> batchList = new ArrayList<>();
+        BulkOrder bulkOrder;
+        for (Integer key:ShareMem.bulkOrderToShow.keySet()){
+            bulkOrder = ShareMem.bulkOrderToShow.get(key);
+            Map<String,Object> batchDetail = new HashMap<>();
+            batchDetail.put("number",bulkOrder.getId());
+            batchDetail.put("sendTime",bulkOrder.getSendTimeToShow());
+            List<Integer> ordersId = new ArrayList<>();
+            for (int i = 0;i<bulkOrder.getOrders().size();i++){
+                ordersId.add(bulkOrder.getOrders().get(i).getId());
+            }
+            batchDetail.put("orderId",ordersId);
+            batchDetail.put("orderNum",bulkOrder.getReceNum());
+            batchList.add(batchDetail);
+        }
+        String json =  JsonUtil.jsonToMap(new String[]{"retcode","data"},
+                new Object[]{Constant.TRUE,batchList});
+        return json;
+    }
+
     /***
      * 添加打印机
      * @param
@@ -129,6 +237,7 @@ public class PrinterController {
 
         return JsonUtil.jsonToMap(new String[]{"status"}, new Object[]{"SUCCESS"});
     }
+
 
 
     /***
@@ -220,9 +329,9 @@ public class PrinterController {
     @ResponseBody
     public String choicePrinter(@PathVariable int printerId, @PathVariable int number, @PathVariable int size,@PathVariable int point) {
         //此处先设置简略的逻辑
-        if(ShareMem.priSocketMap.get(ShareMem.printerIdMap.get(printerId))==null){
-            return "打印机目前已断开，请先连接打印机";
-        }
+//        if(ShareMem.priSocketMap.get(ShareMem.printerIdMap.get(printerId))==null){
+//            return "打印机目前已断开，请先连接打印机";
+//        }
         double finalsize;
         finalsize = size + 0.1 * point;
         //如果 size 不合规格，修改之

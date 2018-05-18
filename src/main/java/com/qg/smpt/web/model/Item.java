@@ -2,6 +2,8 @@ package com.qg.smpt.web.model;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 
+import java.util.Date;
+
 /**
  * 订单内容
  */
@@ -11,6 +13,15 @@ public class Item {
     @JsonIgnore
     private int price;
     private int count;
+    private Date orderTime;
+    public Date getOrderTime() {
+        return orderTime;
+    }
+
+    public void setOrderTime(Date orderTime) {
+        this.orderTime = orderTime;
+    }
+
     public String getName() {
         return name;
     }
