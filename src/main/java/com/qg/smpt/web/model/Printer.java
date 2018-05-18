@@ -133,8 +133,8 @@ public final class Printer {
         this.successRate = successRate;
     }
 
-    public Printer() {this.currentBulk = 0;this.lastSendTime = 0;this.firstSendTime = 0;this.printerStatus = "主控板处于健康状态";}
-    public Printer(int id){this.id = id;this.currentBulk = 0;this.lastSendTime = 0;this.firstSendTime = 0;this.printerStatus = "主控板处于健康状态";}
+    public Printer() {this.currentBulk = 0;this.lastSendTime = 0;this.firstSendTime = 0;this.printerStatus = "主控板处于健康状态";this.printerUnitSize = 0;}
+    public Printer(int id){this.id = id;this.currentBulk = 0;this.lastSendTime = 0;this.firstSendTime = 0;this.printerStatus = "主控板处于健康状态";this.printerUnitSize = 0;}
 
     public void increaseErrorNum(int num) {
         this.printErrorNum += num;

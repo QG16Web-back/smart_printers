@@ -159,8 +159,10 @@ public class PrinterController {
             return JsonUtil.jsonToMap(new String[]{"status"}, new Object[]{"EMPTY"});
         }
         long hasTypedTime = printer.getLastSendTime()-printer.getFirstSendTime();
-        printerDetail.put("hasTypedTime",hasTypedTime/1000 + "秒");
-        printerDetail.put("printerStatus",printer.getPrinterStatus());
+        printerDetail.put("hasTypedTime",hasTypedTime + "ms");
+        if (printer.getPrinterStatus() == "14") {
+            printerDetail.put("printerStatus","is printing");
+        }
         printerDetail.put("orderSum",printer.getOredrsNum());
         printerDetail.put("cutSum",108);
         printerDetail.put("cunErrorSum",12);
@@ -185,7 +187,7 @@ public class PrinterController {
             menuDetail.put("time",item.getOrderTime());
             menuDetail.put("good",item.getName());
             menuDetail.put("price",item.getPrice());
-            menuDetail.put("number",item.getCount());
+            menuDetail.put("count",item.getCount());
             menuList.add(menuDetail);
         }
         String json =  JsonUtil.jsonToMap(new String[]{"retcode","data"},
