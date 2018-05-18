@@ -115,10 +115,18 @@ public class PrinterController {
         Map<String,Object> systemStatus = new HashMap<>();
         systemStatus.put("printersSum",printersSum);
         systemStatus.put("unitsSum",unitsSum);
-        systemStatus.put("typesSum",ShareMem.systemStatus.get("typesSum"));
-        systemStatus.put("isTyping",ShareMem.systemStatus.get("isTyping"));
+        if (ShareMem.systemStatus.get("typesSum") == null) {
+            systemStatus.put("typesSum",0);
+        }else {
+            systemStatus.put("typesSum",ShareMem.systemStatus.get("typesSum"));
+        }
+        if (ShareMem.systemStatus.get("isTyping") == null){
+            systemStatus.put("isTyping","不在打印中");
+        }else {
+            systemStatus.put("isTyping","正在打印中");
+        }
         systemStatus.put("errorRate",0.1);
-        systemStatus.put("handlingCapacity",300);
+        systemStatus.put("handlingCapacity",200);
         String json =  JsonUtil.jsonToMap(new String[]{"retcode","data"},
                 new Object[]{Constant.TRUE,systemStatus});
         return json;
@@ -133,11 +141,19 @@ public class PrinterController {
     public String showPrinter(){
         List<Map<String,Object>> printersStatus = new ArrayList<>();
         int i;
-        for (i=0;i<ShareMem.printerIdMap.size();i++) {
+        for (Integer key:ShareMem.printerIdMap.keySet()) {
             Map<String,Object> printerStatus = new HashMap<>(3);
-            printerStatus.put("printerId", ShareMem.printerIdMap.get(i).getId());
-            printerStatus.put("printerStatus",ShareMem.printerIdMap.get(i).getPrinterStatus());
-            printerStatus.put("unitsSum",ShareMem.printerIdMap.get(i).getPrinterUnitSize());
+            printerStatus.put("printerId", ShareMem.printerIdMap.get(key).getId());
+            if(ShareMem.printerIdMap.get(key).getPrinterStatus() == null){
+                printerStatus.put("printerStatus","打印机正常");
+            }else {
+                printerStatus.put("printerStatus",ShareMem.printerIdMap.get(key).getPrinterStatus());
+            }
+            if (ShareMem.printerIdMap.get(key).getPrinterUnitSize() == null) {
+                printerStatus.put("unitsSum", 0);
+            }else {
+                printerStatus.put("unitsSum",ShareMem.printerIdMap.get(key).getPrinterUnitSize());
+            }
             printersStatus.add(printerStatus);
         }
         String json =  JsonUtil.jsonToMap(new String[]{"retcode","data"},

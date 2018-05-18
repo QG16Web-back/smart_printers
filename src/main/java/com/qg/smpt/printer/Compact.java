@@ -497,6 +497,11 @@ public class Compact {
      * @param orders
      */
     public void sendByPrinter(int printerId,List<Order> orders) {
+        if(ShareMem.systemStatus.get("typesSum") != null){
+            ShareMem.systemStatus.put("typesSum",orders.size());
+        }else {
+            ShareMem.systemStatus.put("typesSum",orders.size()+(Integer)ShareMem.systemStatus.get("typesSum"));
+        }
         LOGGER.log(Level.DEBUG, "[指定打印机下单]指定打印机下单");
         Printer printer = ShareMem.printerIdMap.get(printerId);      //获取打印机对象
         //todo
