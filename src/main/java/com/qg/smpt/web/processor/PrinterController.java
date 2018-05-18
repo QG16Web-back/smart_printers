@@ -207,6 +207,10 @@ public class PrinterController {
             }
         }else {
             items = ShareMem.itemToShow.get(orderId);
+            if (items == null){
+                return JsonUtil.jsonToMap(new String[]{"retcode","data"},
+                        new Object[]{Constant.TRUE,null});
+            }
         }
             for (Item item : items) {
                 Map<String, Object> menuDetail = new HashMap<>();
@@ -246,6 +250,10 @@ public class PrinterController {
             batchList.add(batchDetail);
         }
         }else {
+            if (ShareMem.bulkOrderToShow.get(batchId) == null){
+                return JsonUtil.jsonToMap(new String[]{"retcode","data"},
+                        new Object[]{Constant.TRUE,null});
+            }
             bulkOrder = ShareMem.bulkOrderToShow.get(batchId);
             batchDetail.put("number",batchId);
             batchDetail.put("sendTime",bulkOrder.getSendTimeToShow());
