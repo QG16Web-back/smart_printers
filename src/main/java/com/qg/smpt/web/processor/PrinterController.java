@@ -111,7 +111,10 @@ public class PrinterController {
     @ResponseBody
     public String systemStatus(){
         int printersSum = ShareMem.printerIdMap.size();
-        int unitsSum = ShareMem.printerUnitStatusMap.size();
+        int unitsSum = 0;
+        for (Integer key:ShareMem.printerIdMap.keySet()){
+            unitsSum += ShareMem.printerIdMap.get(key).getPrinterUnitSize();
+        }
         Map<String,Object> systemStatus = new HashMap<>();
         systemStatus.put("printersSum",printersSum);
         systemStatus.put("unitsSum",unitsSum);
