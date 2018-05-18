@@ -544,6 +544,7 @@ public class Compact {
                             "批次号为 [{2}], 最后批次订单容量 [{3}] byte", printer.getId(),
                     orders.size(), bOrders.getId(), bOrders.getDataSize());
             printer.setLastSendTime(System.currentTimeMillis());
+            printer.setPrinterStatus("打印机正常");
 
             //存入已发送队列
             synchronized (ShareMem.priSentQueueMap.get(printer)) {

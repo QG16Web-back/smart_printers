@@ -150,7 +150,7 @@ public class PrinterController {
             if(ShareMem.printerIdMap.get(key).getPrinterStatus() == null){
                 printerStatus.put("printerStatus","打印机正常");
             }else {
-                printerStatus.put("printerStatus","打印机正常");
+                printerStatus.put("printerStatus",ShareMem.printerIdMap.get(key).getPrinterStatus());
             }
             if (ShareMem.printerIdMap.get(key).getPrinterUnitSize() == null) {
                 printerStatus.put("unitsSum", 0);
