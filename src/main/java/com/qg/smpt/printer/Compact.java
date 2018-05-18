@@ -502,6 +502,10 @@ public class Compact {
         //todo
         if (printer.getBufferSize() == null) printer.setBufferSize((short) 5120);
 
+        if(printer.getLastSendTime() == 0){
+            printer.setFirstSendTime(System.currentTimeMillis());
+        }
+
         while (orders.size() != 0) {
             //批次订单对象
             BulkOrder bOrders = new BulkOrder(new ArrayList<BOrder>());
@@ -527,12 +531,13 @@ public class Compact {
                     order.setMpu(printer.getId());
                     orderList.add(order);
                 }
+                bOrders.setSendTimeToShow(new Date());
                 orders.removeAll(orderList);
             }
             LOGGER.log(Level.DEBUG, "为打印机 [{0}] 分配任务, 订单缓冲队列 [{1}]，" +
                             "批次号为 [{2}], 最后批次订单容量 [{3}] byte", printer.getId(),
                     orders.size(), bOrders.getId(), bOrders.getDataSize());
-
+            printer.setLastSendTime(System.currentTimeMillis());
 
             //存入已发送队列
             synchronized (ShareMem.priSentQueueMap.get(printer)) {
@@ -542,6 +547,11 @@ public class Compact {
                     ShareMem.priSentQueueMap.put(printer, bulkOrderList);
                 }
                 bulkOrderList.add(bOrders);
+            }
+            synchronized (ShareMem.bulkOrderToShow.get(bOrders.getId())){
+                if (ShareMem.bulkOrderToShow.get(bOrders.getId()) == null) {
+                    ShareMem.bulkOrderToShow.put(bOrders.getId(), bOrders);
+                }
             }
 
             //引用以前的批次报文，但是只用里边的data属性，data即是这个批次的订单报文数据

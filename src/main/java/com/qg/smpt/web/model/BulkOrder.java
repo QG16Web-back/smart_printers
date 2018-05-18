@@ -10,6 +10,7 @@ import com.qg.smpt.util.TimeConvert;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -19,6 +20,17 @@ import java.util.List;
 public final class BulkOrder {
 
     private long sendtime;          // 订单批次的发送时间
+
+    //批次发送时间，给前端展示
+    private Date sendTimeToShow;
+
+    public Date getSendTimeToShow() {
+        return sendTimeToShow;
+    }
+
+    public void setSendTimeToShow(Date sendTimeToShow) {
+        this.sendTimeToShow = sendTimeToShow;
+    }
 
     public long getSendtime() {
         return sendtime;

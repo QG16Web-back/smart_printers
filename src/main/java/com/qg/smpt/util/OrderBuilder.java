@@ -67,7 +67,7 @@ public class OrderBuilder {
 	private static int prices[] = {4, 4, 5, 3, 8};
 	
 	//顾客信息
-	private static String customers[] = {"陈俊铭", "温天信", "张诗婷", "李伟淙", "许艺茂", "方锐"};
+	private static String customers[] = {"陈俊铭", "温天信", "张诗婷", "李伟淙", "许艺茂", "方锐","林楷"};
 	private static String cAddress[] = {"广工西三736", "广工西四612", "广工东十三xxx", "广工西三741", "广工西三747", "广工西三2xx"};
 	private static String cContact[] = {"15521256251", "18852423652", "13432252452", "15622365455", "18819255400", "15695542562"};
 	
@@ -222,6 +222,10 @@ public class OrderBuilder {
 			}
 		}
 		order.setItems(items);
+		//将下单的订单保存起来，用于前端展示
+		for (Item item:items) {
+			ShareMem.itemToShow.put(order.getId(), item);
+		}
 		LOGGER.log(Level.DEBUG,"items is " + items + "and size is " + size,OrderBuilder.class);
 		//生成其他付费信息
 		order.setOrderMealFee(getMealCost());
@@ -374,6 +378,7 @@ public class OrderBuilder {
 		item.setName(dish[i]);
 		item.setPrice(prices[i]);
 		item.setCount(1);//getRandom(5) + 1
+		item.setOrderTime(new Date());
 		return item;
 	}
 	
