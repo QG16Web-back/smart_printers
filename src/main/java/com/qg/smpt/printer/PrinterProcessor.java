@@ -1059,23 +1059,24 @@ public class PrinterProcessor implements Runnable, Lifecycle{
         } else if ( flag == BConstants.orderExcep ) {
             LOGGER.log(Level.DEBUG, "打印机 [{0}] 异常队列批次 [{1}] 处理成功 当前线程 [{2}]", printer.getId(), bOrderStatus.bulkId, this.id);
             order.setOrderStatus(Integer.valueOf(BConstants.orderExcep).toString());
-            /* 向数据库中插入处理成功的订单数据 */
-            SqlSession sqlSession = sqlSessionFactory.openSession();
-            OrderMapper orderMapper = sqlSession.getMapper(OrderMapper.class);
-            try {
-                LOGGER.log(Level.DEBUG, "====再次确认 orderId: {0}, userId: {1}", order.getId(), order.getUserId());
-                orderMapper.insertUserOrder(order);
-                orderMapper.insert(order);
-            } finally {
-                sqlSession.commit();
-                sqlSession.close();
-            }
+
 
             LOGGER.log(Level.DEBUG, "打印机 [{0}] 的异常队列 移除成功处理批次订单 (id [{1}], position [{2}]) 当前线程 [{3}]", bOrderStatus.printerId,
                     bOrderStatus.bulkId, position, this.id);
             bulkOrderList.remove(position);
         } else {
             LOGGER.log(Level.WARN, "打印机 [{0}] 无g该状态 当前线程 [{1}]", bOrderStatus.printerId, this.id);
+        }
+        /* 向数据库中插入处理成功的订单数据 */
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        OrderMapper orderMapper = sqlSession.getMapper(OrderMapper.class);
+        try {
+            LOGGER.log(Level.DEBUG, "====向数据库中插入then再次确认 orderId: {0}, userId: {1}", order.getId(), order.getUserId());
+            orderMapper.insertUserOrder(order);
+            orderMapper.insert(order);
+        } finally {
+            sqlSession.commit();
+            sqlSession.close();
         }
     }
 
