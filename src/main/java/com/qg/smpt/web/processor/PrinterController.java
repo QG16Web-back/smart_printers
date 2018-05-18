@@ -129,7 +129,11 @@ public class PrinterController {
             systemStatus.put("isTyping","正在打印中");
         }
         systemStatus.put("errorRate",0.1);
-        systemStatus.put("handlingCapacity",200);
+        if (ShareMem.typeSpeed.get("speed") == null) {
+            systemStatus.put("handlingCapacity", 0);
+        }else {
+            systemStatus.put("handlingCapacity",ShareMem.typeSpeed.get("speed"));
+        }
         String json =  JsonUtil.jsonToMap(new String[]{"retcode","data"},
                 new Object[]{Constant.TRUE,systemStatus});
         return json;

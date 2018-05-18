@@ -750,7 +750,22 @@ public class PrinterProcessor implements Runnable, Lifecycle{
         LOGGER.log(Level.DEBUG, "打印机id [{0}], 订单标志 : [{1}] , 订单发送时间戳 : [{2}], " +
                         "所属批次[{3}], 批次内序号 [{4}], 校验和 [{5}] 当前线程 [{6}]", bOrderStatus.printerId, flag,
                 bOrderStatus.seconds, bOrderStatus.bulkId, bOrderStatus.inNumber, bOrderStatus.checkSum, this.id);
-
+        if(ShareMem.typeSpeed.get("bulkId")==null){
+            //初次没有批次速度数据的时候，则存入信息
+            ShareMem.typeSpeed.put("bulkId",bOrderStatus.bulkId);
+            ShareMem.typeSpeed.put("startTime",System.currentTimeMillis());
+            ShareMem.typeSpeed.put("speed",0);
+        }else {
+            //有数据时则计算
+            if (bOrderStatus.bulkId != (Short) ShareMem.typeSpeed.get("bulkId")){
+                Integer speed = bOrderStatus.inNumber/(int)((System.currentTimeMillis()-(Long) ShareMem.typeSpeed.get("startTime"))/1000);
+                ShareMem.typeSpeed.put("speed",speed);
+                ShareMem.typeSpeed.put("bulkId",bOrderStatus.bulkId);
+                ShareMem.typeSpeed.put("startTime",System.currentTimeMillis());
+            }
+        }
+        if (ShareMem.typeSpeed.get("typeSpeed")==null){
+        }
         Printer printer = ShareMem.printerIdMap.get(bOrderStatus.printerId);
 
         /* 获取批次订单队列 flag 0x5 : 获取异常批次订单队列; others : 获取已发送批次订单队列 */

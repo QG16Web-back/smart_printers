@@ -102,6 +102,11 @@ public final class ShareMem {
      */
     public static Map<String,Object> systemStatus;
 
+    /**
+     * 批次吞吐量
+     */
+    public static Map<String,Object> typeSpeed;
+
 
     static {
         // 初始化订单ID
@@ -142,6 +147,8 @@ public final class ShareMem {
         printerUnitStatusMap = new HashMap<>();
 
         systemStatus = new HashMap<>();
+
+        typeSpeed = new HashMap<>();
     }
 
     private static void initOrderId() {
