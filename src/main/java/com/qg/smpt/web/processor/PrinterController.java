@@ -188,6 +188,17 @@ public class PrinterController {
         }else {
             printerDetail.put("printerStatus","不在打印");
         }
+        printerDetail.put("printerId", ShareMem.printerIdMap.get(printerId).getId());
+        if(ShareMem.printerIdMap.get(printerId).getPrinterStatus() == null){
+            printerDetail.put("printerStatus","打印机正常");
+        }else {
+            printerDetail.put("printerStatus",ShareMem.printerIdMap.get(printerId).getPrinterStatus());
+        }
+        if (ShareMem.printerIdMap.get(printerId).getPrinterUnitSize() == null) {
+            printerDetail.put("unitsSum", 0);
+        }else {
+            printerDetail.put("unitsSum",ShareMem.printerIdMap.get(printerId).getPrinterUnitSize());
+        }
         printerDetail.put("orderSum",printer.getOredrsNum());
         printerDetail.put("cutSum",108);
         printerDetail.put("cunErrorSum",12);
