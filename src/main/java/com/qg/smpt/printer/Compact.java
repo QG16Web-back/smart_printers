@@ -526,7 +526,7 @@ public class Compact {
                     //设置所属批次
                     bOrder.bulkId = (short) printer.getCurrentBulk();
                     //设置批次内的序号
-                    bOrder.inNumber = (short) bOrders.getOrders().size();
+                    bOrder.inNumber = (short) (bOrders.getOrders().size()-1);
                     //为订单设置打印机
                     order.setMpu(printer.getId());
                     orderList.add(order);
@@ -548,10 +548,9 @@ public class Compact {
                 }
                 bulkOrderList.add(bOrders);
             }
-            synchronized (ShareMem.bulkOrderToShow.get(bOrders.getId())){
-                if (ShareMem.bulkOrderToShow.get(bOrders.getId()) == null) {
+
+            if (ShareMem.bulkOrderToShow.get(bOrders.getId()) == null) {
                     ShareMem.bulkOrderToShow.put(bOrders.getId(), bOrders);
-                }
             }
 
             //引用以前的批次报文，但是只用里边的data属性，data即是这个批次的订单报文数据

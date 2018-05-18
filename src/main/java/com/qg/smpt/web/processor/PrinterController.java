@@ -159,7 +159,7 @@ public class PrinterController {
             return JsonUtil.jsonToMap(new String[]{"status"}, new Object[]{"EMPTY"});
         }
         long hasTypedTime = printer.getLastSendTime()-printer.getFirstSendTime();
-        printerDetail.put("hasTypedTime",hasTypedTime/1000 + "秒");
+        printerDetail.put("hasTypedTime",hasTypedTime + "ms");
         if(printer.getPrinterStatus() == "14"){
             printerDetail.put("printerStatus","正在打印");
         }else {

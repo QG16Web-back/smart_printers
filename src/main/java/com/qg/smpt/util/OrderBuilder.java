@@ -26,14 +26,14 @@ public class OrderBuilder {
 	private static List<User> users = null;
 
 	private static int userCount = 0;
-	
+
 	public OrderBuilder() {
 
 	}
 
-	
+
 	static {
-		LOGGER.log(Level.DEBUG, "¶©µ¥Éú³ÉÆ÷ÕıÔÚ³õÊ¼»¯ÉÌ¼ÒĞÅÏ¢", OrderBuilder.class);
+		LOGGER.log(Level.DEBUG, "è®¢å•ç”Ÿæˆå™¨æ­£åœ¨åˆå§‹åŒ–å•†å®¶ä¿¡æ¯", OrderBuilder.class);
 
 		SqlSessionFactory sqlSessionFactory = SqlSessionFactoryBuild.getSqlSessionFactory();
 		SqlSession sqlSession = sqlSessionFactory.openSession();
@@ -50,47 +50,47 @@ public class OrderBuilder {
 		else
 			users = new ArrayList<>();
 	}
-	
-	
+
+
 	private static int num = 0;
-	
-	//¹«Ë¾Ãû³Æ
-	private static String[] companys = {"ÃÀÍÅÍâÂô", "¶öÁËÂğ", "°Ù¶ÈÌÔÃ×", "°Ù¶ÈÍâÂô"};
-	
-//	//ÉÌ¼ÒĞÅÏ¢
-//	private static String shops[] = {"Âóµ±ÀÍ", "¿ÏµÂ»ù", "ºÃÄÑ³ÔµÄµØ·½", "Ïë²»³öÊ²Ã´µØ·½ÁË"};
-//	private static String address[] = {"gogoĞÂÌìµØÒ»Â¥25ºÅ","¹ã´óÉÌÒµÇø", "¹ã¶«¹¤Òµ´óÑ§·¹ÌÃ", "µØÖ·Î´Öª" };
+
+	//å…¬å¸åç§°
+	private static String[] companys = {"ç¾å›¢å¤–å–", "é¥¿äº†å—", "ç™¾åº¦æ·˜ç±³", "ç™¾åº¦å¤–å–"};
+
+//	//å•†å®¶ä¿¡æ¯
+//	private static String shops[] = {"éº¦å½“åŠ³", "è‚¯å¾·åŸº", "å¥½éš¾åƒçš„åœ°æ–¹", "æƒ³ä¸å‡ºä»€ä¹ˆåœ°æ–¹äº†"};
+//	private static String address[] = {"gogoæ–°å¤©åœ°ä¸€æ¥¼25å·","å¹¿å¤§å•†ä¸šåŒº", "å¹¿ä¸œå·¥ä¸šå¤§å­¦é¥­å ‚", "åœ°å€æœªçŸ¥" };
 //	private static String contact[] = {"85241523", "84523651", "15521232546", "15622365842"};
-	
-	//²Ëµ¥
-	private static String dish[] = {"Î÷ºìÊÁ³´·¬ÇÑ", "ÆÏÌÑ¸É³´Ä¾¶ú", "Î÷¹Ï¸É³´Ïã½¶", "ÁñÁ«¼¦µ°µ°¸â", "×îºÃ³ÔÍ¯×Ó¼¦"};
+
+	//èœå•
+	private static String dish[] = {"è¥¿çº¢æŸ¿ç‚’ç•ªèŒ„", "è‘¡è„å¹²ç‚’æœ¨è€³", "è¥¿ç“œå¹²ç‚’é¦™è•‰", "æ¦´è²é¸¡è›‹è›‹ç³•", "æœ€å¥½åƒç«¥å­é¸¡"};
 	private static int prices[] = {4, 4, 5, 3, 8};
-	
-	//¹Ë¿ÍĞÅÏ¢
-	private static String customers[] = {"³Â¿¡Ãú", "ÎÂÌìĞÅ", "ÕÅÊ«æÃ", "ÀîÎ°äÈ", "ĞíÒÕÃ¯", "·½Èñ","ÁÖ¿¬"};
-	private static String cAddress[] = {"¹ã¹¤Î÷Èı736", "¹ã¹¤Î÷ËÄ612", "¹ã¹¤¶«Ê®Èıxxx", "¹ã¹¤Î÷Èı741", "¹ã¹¤Î÷Èı747", "¹ã¹¤Î÷Èı2xx"};
+
+	//é¡¾å®¢ä¿¡æ¯
+	private static String customers[] = {"é™ˆä¿Šé“­", "æ¸©å¤©ä¿¡", "å¼ è¯—å©·", "æä¼Ÿæ·™", "è®¸è‰ºèŒ‚", "æ–¹é”","æ—æ¥·"};
+	private static String cAddress[] = {"å¹¿å·¥è¥¿ä¸‰736", "å¹¿å·¥è¥¿å››612", "å¹¿å·¥ä¸œåä¸‰xxx", "å¹¿å·¥è¥¿ä¸‰741", "å¹¿å·¥è¥¿ä¸‰747", "å¹¿å·¥è¥¿ä¸‰2xx"};
 	private static String cContact[] = {"15521256251", "18852423652", "13432252452", "15622365455", "18819255400", "15695542562"};
-	
-	private static String remarks[] = {"¼Ó·¹", "ÍíµãÀ´", "¼Ó²Ë"};
-	
+
+	private static String remarks[] = {"åŠ é¥­", "æ™šç‚¹æ¥", "åŠ èœ"};
+
 	private static String expectTimes[] = {"10:30", "11.30", "12.30", "5.30", "6.30", "7.30"};
 
 	/**
-	 * ¶©µ¥Éú³ÉÆ÷ flag 0-·Ç¼Ó¼±£» 1-¼Ó¼±
+	 * è®¢å•ç”Ÿæˆå™¨ flag 0-éåŠ æ€¥ï¼› 1-åŠ æ€¥
 	 * @param flag
 	 * @return
-     */
+	 */
 	public static Order produceOrder(boolean flag, boolean hasError)  {
 		Order order = new Order();
 		order.setHasError(hasError);
 
 		int randomNum = 0;
-		
-		//Éú»î¹«Ë¾ĞÅÏ¢
+
+		//ç”Ÿæ´»å…¬å¸ä¿¡æ¯
 		randomNum = getRandom(4);
 		order.setCompany(companys[randomNum]);
-		
-		//Éú³ÉÉÌ¼ÒĞÅÏ¢
+
+		//ç”Ÿæˆå•†å®¶ä¿¡æ¯
 //		randomNum = getRandom(4);
 		if(userCount > 0){
 			randomNum = getRandom(userCount);
@@ -100,22 +100,22 @@ public class OrderBuilder {
 			order.setClientTelephone(u.getUserPhone());
 			order.setOrderStatus(String.valueOf(BConstants.orderWait));
 		}
-		
-		//»ñÈ¡¶©µ¥ĞÅÏ¢
+
+		//è·å–è®¢å•ä¿¡æ¯
 		order.setId(++ShareMem.currentOrderNum);
 
 		order.setOrderTime((new Date()));
 		order.setExpectTime(expectTimes[getRandom(6)]);
 		order.setOrderRemark(remarks[getRandom(3)]);
-		
-		//Éú³É¹Ë¿ÍĞÅÏ¢
+
+		//ç”Ÿæˆé¡¾å®¢ä¿¡æ¯
 		randomNum = getRandom(6);
 		order.setUserName(customers[randomNum]);
 		order.setUserAddress(cAddress[randomNum]);
 		order.setUserTelephone(cContact[randomNum]);
 		order.setOrderStatus(Integer.valueOf(BConstants.orderWait).toString());
 
-		//Éú³É²Ë
+		//ç”Ÿæˆèœ
 //		randomNum = getRandom(5) + 1;
 		randomNum = 1;
 		List<Item> items = new ArrayList<Item>(randomNum);
@@ -125,18 +125,18 @@ public class OrderBuilder {
 //			if (a%2==0) a = 20;
 //			else a = 1;
 //			for (int b = 0; b < a; b++)
-					items.add(createItem(i));
+			items.add(createItem(i));
 
 		}
 		order.setItems(items);
-		
-		//Éú³ÉÆäËû¸¶·ÑĞÅÏ¢
+
+		//ç”Ÿæˆå…¶ä»–ä»˜è´¹ä¿¡æ¯
 		order.setOrderMealFee(getMealCost());
 		order.setOrderDisFee(getdeliveryCost());
 		order.setOrderPreAmount(getRandom(6));
-		order.setOrderPayStatus("ÒÑÖ§¸¶");
+		order.setOrderPayStatus("å·²æ”¯ä»˜");
 
-		// ÅĞ¶ÏÊÇ·ñÉèÖÃ¼Ó¼±
+		// åˆ¤æ–­æ˜¯å¦è®¾ç½®åŠ æ€¥
 		if (flag) {
 			order.setOrderType('1');
 		} else {
@@ -146,7 +146,7 @@ public class OrderBuilder {
 	}
 
 	/**
-	 * ÓÉÁÖ¿¬±àĞ´£¬Ìá¹©¸øÇ¶ÈëÊ½Ö¸¶¨´óĞ¡²âÊÔ
+	 * ç”±æ—æ¥·ç¼–å†™ï¼Œæä¾›ç»™åµŒå…¥å¼æŒ‡å®šå¤§å°æµ‹è¯•
 	 * @param size
 	 * @param flag
 	 * @param hasError
@@ -158,11 +158,11 @@ public class OrderBuilder {
 
 		int randomNum = 0;
 
-		//Éú»î¹«Ë¾ĞÅÏ¢
+		//ç”Ÿæ´»å…¬å¸ä¿¡æ¯
 		randomNum = getRandom(4);
 		order.setCompany(companys[randomNum]);
 
-		//Éú³ÉÉÌ¼ÒĞÅÏ¢
+		//ç”Ÿæˆå•†å®¶ä¿¡æ¯
 //		randomNum = getRandom(4);
 		if (userCount > 0) {
 			randomNum = getRandom(userCount);
@@ -173,23 +173,23 @@ public class OrderBuilder {
 			order.setOrderStatus(String.valueOf(BConstants.orderWait));
 		}
 
-		//»ñÈ¡¶©µ¥ĞÅÏ¢
+		//è·å–è®¢å•ä¿¡æ¯
 		order.setId(++ShareMem.currentOrderNum);
 
 		order.setOrderTime((new Date()));
 		order.setExpectTime(expectTimes[getRandom(6)]);
 		order.setOrderRemark(remarks[getRandom(3)]);
 
-		//Éú³É¹Ë¿ÍĞÅÏ¢
+		//ç”Ÿæˆé¡¾å®¢ä¿¡æ¯
 		randomNum = getRandom(6);
 		order.setUserName(customers[randomNum]);
 		order.setUserAddress(cAddress[randomNum]);
 		order.setUserTelephone(cContact[randomNum]);
 		order.setOrderStatus(Integer.valueOf(BConstants.orderWait).toString());
 
-		//Éú³É²Ë
+		//ç”Ÿæˆèœ
 		List<Item> items = null;
-		//½«byteĞÍ×ª³É²ËµÄÊıÄ¿
+		//å°†byteå‹è½¬æˆèœçš„æ•°ç›®
 		if (size != 0) {
 			if(size <= 1 && size >= 0.57){
 				size -= 0.57;
@@ -202,7 +202,7 @@ public class OrderBuilder {
 			LOGGER.log(Level.DEBUG," 1/size is " + size,OrderBuilder.class);
 			items = new ArrayList<>((int) size);
 		} else {
-			//Ëæ»ú´óĞ¡µÄ»°Ëæ»úĞÔÒª´óÒ»µã
+			//éšæœºå¤§å°çš„è¯éšæœºæ€§è¦å¤§ä¸€ç‚¹
 			randomNum = getRandom(5);
 			items = new ArrayList<>(150);
 		}
@@ -222,18 +222,18 @@ public class OrderBuilder {
 			}
 		}
 		order.setItems(items);
-		//½«ÏÂµ¥µÄ¶©µ¥±£´æÆğÀ´£¬ÓÃÓÚÇ°¶ËÕ¹Ê¾
+		//å°†ä¸‹å•çš„è®¢å•ä¿å­˜èµ·æ¥ï¼Œç”¨äºå‰ç«¯å±•ç¤º
 		for (Item item:items) {
 			ShareMem.itemToShow.put(order.getId(), item);
 		}
 		LOGGER.log(Level.DEBUG,"items is " + items + "and size is " + size,OrderBuilder.class);
-		//Éú³ÉÆäËû¸¶·ÑĞÅÏ¢
+		//ç”Ÿæˆå…¶ä»–ä»˜è´¹ä¿¡æ¯
 		order.setOrderMealFee(getMealCost());
 		order.setOrderDisFee(getdeliveryCost());
 		order.setOrderPreAmount(getRandom(6));
-		order.setOrderPayStatus("ÒÑÖ§¸¶");
+		order.setOrderPayStatus("å·²æ”¯ä»˜");
 
-		// ÅĞ¶ÏÊÇ·ñÉèÖÃ¼Ó¼±
+		// åˆ¤æ–­æ˜¯å¦è®¾ç½®åŠ æ€¥
 		if (flag) {
 			order.setOrderType('1');
 		} else {
@@ -249,11 +249,11 @@ public class OrderBuilder {
 
 		int randomNum = 0;
 
-		//Éú»î¹«Ë¾ĞÅÏ¢
+		//ç”Ÿæ´»å…¬å¸ä¿¡æ¯
 		randomNum = getRandom(4);
 		order.setCompany(companys[randomNum]);
 
-		//Éú³ÉÉÌ¼ÒĞÅÏ¢
+		//ç”Ÿæˆå•†å®¶ä¿¡æ¯
 //		randomNum = getRandom(4);
 		if(userCount > 0){
 			randomNum = getRandom(userCount);
@@ -264,21 +264,21 @@ public class OrderBuilder {
 			order.setOrderStatus(String.valueOf(BConstants.orderWait));
 		}
 
-		//»ñÈ¡¶©µ¥ĞÅÏ¢
+		//è·å–è®¢å•ä¿¡æ¯
 		order.setId(++ShareMem.currentOrderNum);
 
 		order.setOrderTime((new Date()));
 		order.setExpectTime(expectTimes[getRandom(6)]);
 		order.setOrderRemark(remarks[getRandom(3)]);
 
-		//Éú³É¹Ë¿ÍĞÅÏ¢
+		//ç”Ÿæˆé¡¾å®¢ä¿¡æ¯
 		randomNum = getRandom(6);
 		order.setUserName(customers[randomNum]);
 		order.setUserAddress(cAddress[randomNum]);
 		order.setUserTelephone(cContact[randomNum]);
 		order.setOrderStatus(Integer.valueOf(BConstants.orderWait).toString());
 
-		//Éú³É²Ë
+		//ç”Ÿæˆèœ
 		randomNum = getRandom(5) + 1;
 		List<Item> items = new ArrayList<Item>(randomNum);
 		for(int i = 0; i < randomNum; i++){
@@ -286,13 +286,13 @@ public class OrderBuilder {
 		}
 		order.setItems(items);
 
-		//Éú³ÉÆäËû¸¶·ÑĞÅÏ¢
+		//ç”Ÿæˆå…¶ä»–ä»˜è´¹ä¿¡æ¯
 		order.setOrderMealFee(getMealCost());
 		order.setOrderDisFee(getdeliveryCost());
 		order.setOrderPreAmount(getRandom(6));
-		order.setOrderPayStatus("ÒÑÖ§¸¶");
+		order.setOrderPayStatus("å·²æ”¯ä»˜");
 
-		// ÅĞ¶ÏÊÇ·ñÉèÖÃ¼Ó¼±
+		// åˆ¤æ–­æ˜¯å¦è®¾ç½®åŠ æ€¥
 		if (flag) {
 			order.setOrderType('1');
 		} else {
@@ -309,11 +309,11 @@ public class OrderBuilder {
 
 		int randomNum = 0;
 
-		//Éú»î¹«Ë¾ĞÅÏ¢
+		//ç”Ÿæ´»å…¬å¸ä¿¡æ¯
 		randomNum = getRandom(4);
 		order.setCompany(companys[randomNum]);
 
-		//Éú³ÉÉÌ¼ÒĞÅÏ¢
+		//ç”Ÿæˆå•†å®¶ä¿¡æ¯
 //		randomNum = getRandom(4);
 		if(userCount > 0){
 			randomNum = getRandom(userCount);
@@ -324,21 +324,21 @@ public class OrderBuilder {
 			order.setOrderStatus(String.valueOf(BConstants.orderWait));
 		}
 
-		//»ñÈ¡¶©µ¥ĞÅÏ¢
+		//è·å–è®¢å•ä¿¡æ¯
 		order.setId(++ShareMem.currentOrderNum);
 
 		order.setOrderTime((new Date()));
 		order.setExpectTime(expectTimes[getRandom(6)]);
 		order.setOrderRemark(remarks[getRandom(3)]);
 
-		//Éú³É¹Ë¿ÍĞÅÏ¢
+		//ç”Ÿæˆé¡¾å®¢ä¿¡æ¯
 		randomNum = getRandom(6);
 		order.setUserName(customers[randomNum]);
 		order.setUserAddress(cAddress[randomNum]);
 		order.setUserTelephone(cContact[randomNum]);
 		order.setOrderStatus(Integer.valueOf(BConstants.orderWait).toString());
 
-		//Éú³É²Ë
+		//ç”Ÿæˆèœ
 		randomNum = getRandom(5) + 1;
 		List<Item> items = new ArrayList<Item>(randomNum);
 		for(int i = 0; i < randomNum; i++){
@@ -346,13 +346,13 @@ public class OrderBuilder {
 		}
 		order.setItems(items);
 
-		//Éú³ÉÆäËû¸¶·ÑĞÅÏ¢
+		//ç”Ÿæˆå…¶ä»–ä»˜è´¹ä¿¡æ¯
 		order.setOrderMealFee(getMealCost());
 		order.setOrderDisFee(getdeliveryCost());
 		order.setOrderPreAmount(getRandom(6));
-		order.setOrderPayStatus("ÒÑÖ§¸¶");
+		order.setOrderPayStatus("å·²æ”¯ä»˜");
 
-		// ÅĞ¶ÏÊÇ·ñÉèÖÃ¼Ó¼±
+		// åˆ¤æ–­æ˜¯å¦è®¾ç½®åŠ æ€¥
 		if (flag) {
 			order.setOrderType('1');
 		} else {
@@ -364,15 +364,15 @@ public class OrderBuilder {
 	private static int getMealCost() {
 		return getRandom(3);
 	}
-	
+
 	private static int getdeliveryCost() {
 		return getRandom(6);
 	}
-	
+
 	private static int getOrderNum() {
 		return  ++num;
 	}
-	
+
 	private static Item createItem(int i){
 		Item item = new Item();
 		item.setName(dish[i]);
@@ -381,11 +381,11 @@ public class OrderBuilder {
 		item.setOrderTime(new Date());
 		return item;
 	}
-	
+
 	private static String createRemark() {
 		return remarks[getRandom(3)];
 	}
-	
+
 	private static int getRandom(int seed) {
 		return (int)(Math.random() * seed);
 	}
