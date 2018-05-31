@@ -36,6 +36,7 @@ public class UserServiceImpl implements UserService{
 	 * @param userId
 	 * @return 存在则返回对应用户,不存在则返回空
 	 */
+	@Override
 	public User queryById(int userId) {
 		LOGGER.log(Level.DEBUG, "正在通过主键[{0}]来查找用户", userId);
 		
@@ -53,6 +54,7 @@ public class UserServiceImpl implements UserService{
 	 * 查询所有用户
 	 * @return 返回对应的用户集合
 	 */
+	@Override
 	public List<User> queryAllUser() {
 		List<User> users = null;
 		try{
@@ -65,6 +67,7 @@ public class UserServiceImpl implements UserService{
 	}
 	
 
+	@Override
 	@Transactional(rollbackFor=Exception.class)
 	public int registerUser(User user) throws RuntimeException {
 		try{
@@ -88,6 +91,7 @@ public class UserServiceImpl implements UserService{
 		}
 	}
 	
+	@Override
 	public User login(User user) {
 		User loginUser = null;
 		try{
@@ -107,6 +111,7 @@ public class UserServiceImpl implements UserService{
 	}
 	
 	
+	@Override
 	public User queryUserPrinter(int userId) {
 		LOGGER.log(Level.DEBUG, "正在查询用户[{0}]的打印机", userId);
 		

@@ -231,7 +231,7 @@ public class PrinterController {
         }
         LOGGER.log(Level.DEBUG,"size 00<<< is " + size,PrinterController.class);
         Compact compact = new Compact();
-        List<Order> orders = new ArrayList<Order>();
+        List<Order> orders = new ArrayList<>();
         for (int i = 0; i<number; i++){
             orders.add(OrderBuilder.produceOrder(finalsize,false,false));
         }

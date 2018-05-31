@@ -3,7 +3,6 @@ package com.qg.smpt.web.service.impl;
 import java.util.List;
 
 import com.qg.smpt.web.model.Json.OrderDetail;
-import com.sun.tools.corba.se.idl.constExpr.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.qg.smpt.receive.ReceOrderServlet;
@@ -23,6 +22,7 @@ public class OrderServiceImpl implements OrderService{
 	@Autowired
 	private OrderMapper orderMapper;
 	
+	@Override
 	public List<Order> queryByUser(int userId) {
 		return orderMapper.selectByUser(userId);
 	}
@@ -48,6 +48,7 @@ public class OrderServiceImpl implements OrderService{
 		
 	}
 
+	@Override
 	public OrderDetail queryByIdAndPriner(int printerId, int id) {
 		Order order = orderMapper.queryByIdAndPrinter(printerId,id);
 		OrderDetail orderDetail = new OrderDetail(order);

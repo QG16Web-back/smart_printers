@@ -91,6 +91,7 @@ public class PrinterProcessor implements Runnable, Lifecycle{
 
 
     /* 生命周期管理 */
+    @Override
     public void start() throws LifecycleException{
         if (started) {
             throw new LifecycleException("printerProcessor already started");
@@ -100,6 +101,8 @@ public class PrinterProcessor implements Runnable, Lifecycle{
 
         threadStart();
     }
+
+    @Override
     public void stop() {
 
     }
@@ -117,6 +120,7 @@ public class PrinterProcessor implements Runnable, Lifecycle{
     }
 
     /* 线程启动 睡眠 唤醒模块*/
+    @Override
     public void run() {
         // 数据转发
         while (!stopped) {
@@ -281,6 +285,8 @@ public class PrinterProcessor implements Runnable, Lifecycle{
                 case BConstants.removeSign :
                     LOGGER_COMPACT.log(Level.DEBUG, "[确认解约]收到主控板的确认解约，处理线程 thread [{0}]", this.getId());
                     removeSign(bytes);
+                    break;
+                default:break;
             }
 
         } else {
@@ -754,7 +760,6 @@ public class PrinterProcessor implements Runnable, Lifecycle{
                 bOrderStatus.seconds, bOrderStatus.bulkId, bOrderStatus.inNumber, bOrderStatus.checkSum, this.id);
 
         Printer printer = ShareMem.printerIdMap.get(bOrderStatus.printerId);
-
         /* 获取批次订单队列 flag 0x5 : 获取异常批次订单队列; others : 获取已发送批次订单队列 */
         List<BulkOrder> bulkOrderList = null;
         if (flag == BConstants.orderMigrate || flag == BConstants.orderInQueue || flag == BConstants.orderFail || flag == BConstants.orderTyping
@@ -762,6 +767,7 @@ public class PrinterProcessor implements Runnable, Lifecycle{
             // 获取已发队列数据
             bulkOrderList = ShareMem.priSentQueueMap.get(printer);
         } else {
+            // 获取异常队列的数据
             bulkOrderList = ShareMem.priExceQueueMap.get(printer);
         }
         /* 获取批次订单中的订单内容 */
@@ -775,17 +781,18 @@ public class PrinterProcessor implements Runnable, Lifecycle{
             if (bulkOrderF.getId() == bOrderStatus.bulkId) {
                 // 找到批次
                 LOGGER.log(Level.DEBUG, "已找到打印机 [{0}]  对应批次订单号 [{1}] 当前线程 [{2}]", bOrderStatus.printerId, bOrderStatus.bulkId, this.id);
-                // 记录该批次数量大小
+                // 记录该批次数量大小,bulkOrderF 是存在后台的批次订单，要和打印机发过来的进行比较
                 int size = bulkOrderF.getbOrders().size();
                 if (size < bOrderStatus.inNumber) {
                     LOGGER.log(Level.ERROR, "批次 [{2}] 批次内序号 [{0}] 超出批次订单范围 [{1}] 当前线程 [{3}]", bOrderStatus.inNumber, size, bOrderStatus.bulkId, this.id);
                     return;
                 }
-                // 获得对应的那份订单
+                // 获得对应的那份订单，出现异常的那份订单
                 order = bulkOrderF.getOrders().get(bOrderStatus.inNumber);
                 bOrder = bulkOrderF.getbOrders().get(bOrderStatus.inNumber);
 
-                order.setOrderStatus(String.valueOf(bOrderStatus.flag & 0xFF));  // 设置订单状态 //
+                // 设置订单状态 //
+                order.setOrderStatus(String.valueOf(bOrderStatus.flag & 0xFF));
 
                 long time = System.currentTimeMillis();
                 switch (flag) {
@@ -836,6 +843,7 @@ public class PrinterProcessor implements Runnable, Lifecycle{
                     case BConstants.orderExcepFail:
                         order.setExecPrintResultTime(time);
                         break;
+                    default:break;
                 }
 
 //                LOGGER.log(Level.DEBUG, "订单内容 [{0}] 当前线程 [{1}]", order.toString(), this.id);
@@ -951,7 +959,14 @@ public class PrinterProcessor implements Runnable, Lifecycle{
 //                        return;
 //                    }
                     // 如果找不到打印机或者只有一台打印机的情况，直接按照原路返回
-                    socketChannel.write(ByteBuffer.wrap(bBulkOrderByters));
+                    // todo 这样不可以，需要将订单放置到对应的缓存中
+                    //将之后需要打印的订单存放到队列中，只有一台打印机的情况也说明这台打印机是出现问题的
+                    Map<Integer, List<Order>> bufferMap = ShareMem.userOrderBufferMap;
+                    if (bufferMap.containsKey(userId)) {
+                        bufferMap.get(userId).addAll(orderList);
+                    }else {
+                        bufferMap.put(userId, orderList);
+                    }
                 }
 
             } catch (IOException e) {

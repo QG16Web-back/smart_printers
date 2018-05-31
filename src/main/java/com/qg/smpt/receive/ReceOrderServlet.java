@@ -169,7 +169,7 @@ public class ReceOrderServlet extends HttpServlet {
         if (bOrdersList.size() > 0) {
             bOrders = bOrdersList.get(bOrdersList.size() - 1); // 获取容器中最后一个批次订
         } else {
-            bOrders = new BulkOrder(new ArrayList<BOrder>());
+            bOrders = new BulkOrder(new ArrayList<>());
             printer.increaseBulkId();
             bOrders.setId(printer.getCurrentBulk());
             bOrdersList.add(bOrders);
@@ -275,10 +275,11 @@ public class ReceOrderServlet extends HttpServlet {
     }
 
     private List<BulkOrder> getBulkBuffer(Printer printer) {
+        //获取这个主板
         List<BulkOrder> bOrdersList = ShareMem.priBufferMapList.get(printer);
         if (bOrdersList == null) {
             LOGGER.log(Level.DEBUG, "初始化打印机-打印机缓存批次订单对象 priBufferMapList 关系");
-            bOrdersList = new ArrayList<BulkOrder>();
+            bOrdersList = new ArrayList<>();
 
             // 创建批次订单容器
             ShareMem.priBufferMapList.put(printer, bOrdersList);

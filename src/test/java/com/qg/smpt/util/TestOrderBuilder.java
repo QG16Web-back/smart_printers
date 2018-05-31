@@ -41,6 +41,6 @@ public class TestOrderBuilder {
 		String json = JsonUtil.objectToJson(o);
 		System.out.println(json);
 	}
-	
+
 	
 }
