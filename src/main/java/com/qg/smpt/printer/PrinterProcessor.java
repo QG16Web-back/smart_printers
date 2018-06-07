@@ -869,7 +869,7 @@ public class PrinterProcessor implements Runnable, Lifecycle {
             }
         }
         if (position == bulkOrderList.size()) {
-            LOGGER.log(Level.WARN, "打印机[{0}] 批次订单号[{1}] 订单内序号[{2}] 批次并不存在 ;当前线程 [{3}]", bOrderStatus.printerId,
+            LOGGER.log(Level.WARN, "打印机[{0}] 所属批次[{1}] 批次内序列号[{2}] 批次并不存在 ;当前线程 [{3}]", bOrderStatus.printerId,
                     bOrderStatus.bulkId, bOrderStatus.inNumber, this.id);
             return;
         }
@@ -977,6 +977,8 @@ public class PrinterProcessor implements Runnable, Lifecycle {
 //                    if (user.getErrorNum() == 3) {
 //                        return;
 //                    }
+                    LOGGER.log(Level.INFO, "打印机 [{0}] 进行订单转移(批次订单 [{1}], 批次内序列号 [{2}])，线程为 [{3}]", bOrderStatus.printerId,
+                            bOrderStatus.bulkId, bOrderStatus.inNumber,this.id);
                     List<BulkOrder> bufferMapList = ShareMem.priBufferMapList.get(printer);
                     bufferMapList.add(bulkOrder);
                     // todo 这样不可以，需要将订单放置到对应的缓存中
