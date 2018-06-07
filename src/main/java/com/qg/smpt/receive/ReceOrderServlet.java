@@ -1,5 +1,6 @@
 package com.qg.smpt.receive;
 
+import com.qg.smpt.printer.Compact;
 import com.qg.smpt.printer.Constants;
 import com.qg.smpt.printer.PrinterProcessor;
 import com.qg.smpt.printer.model.BConstants;
@@ -245,9 +246,14 @@ public class ReceOrderServlet extends HttpServlet {
 
         ShareMem.userOrderBufferMap.remove(userId);
 
-        for (Order o : orders) {
-            setOrderData(p, userId, o);
-        }
+        LOGGER.log(Level.INFO, "打印机 [{0}] 新建连接，有缓存订单，开始进行订单转移",p.getId());
+        //使用直接打印接口下单
+        Compact compact = new Compact();
+        compact.sendByPrinter(p.getId(),orders);
+
+//        for (Order o : orders) {
+//            setOrderData(p, userId, o);
+//        }
     }
 
     private Printer selectPrinter(List<Printer> printers,int printerId) {
