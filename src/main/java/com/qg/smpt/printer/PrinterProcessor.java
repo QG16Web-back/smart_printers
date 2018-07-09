@@ -948,6 +948,7 @@ public class PrinterProcessor implements Runnable, Lifecycle {
                 Compact compact = new Compact();
                 // 获得最高信任度打印机 id
                 int printerId = compact.getMaxCreForBulkPrinter(userId);
+                LOGGER.log(Level.INFO, "打印机 id : [{0}] ", printerId);
                 Printer agent = ShareMem.printerIdMap.get(printerId);
                 LOGGER.log(Level.DEBUG, "打印机id === " + printerId);
                 SocketChannel printerChannel = ShareMem.priSocketMap.get(agent);
