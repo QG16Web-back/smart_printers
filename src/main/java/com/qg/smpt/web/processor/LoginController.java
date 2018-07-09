@@ -20,7 +20,9 @@ import com.qg.smpt.web.model.User;
 import com.qg.smpt.web.service.UserService;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class LoginController {
@@ -44,7 +46,7 @@ public class LoginController {
 		// run the login method.
 		// login successful - return the user
 		// login fail - return null
-		User loginUser = userService.login(user);
+		User loginUser = userService.login(null);
 		
 		// set the login status
 		retcode = (loginUser != null ? Constant.TRUE : Constant.FALSE);
@@ -63,19 +65,17 @@ public class LoginController {
 	}
 	
 	
-	@RequestMapping(value="/login", method=RequestMethod.GET, produces="application/html;charset=utf-8" )
-	public String login(String userAccount, String userPassword, HttpServletRequest request, HttpServletResponse response) {
-		User user = installUser(userAccount, userPassword);
-		
+	@RequestMapping(value="/login", method=RequestMethod.POST, produces="application/json;charset=utf-8" )
+	public String login(@RequestBody Map<String, String> map, HttpServletRequest request) {
+		String userAccount = map.get("userAccount");
+
+		Map<String,Boolean> success = new HashMap<>(1);
 		// check the login infomation is correct
-		if(!checkInput(user)){
-			 return "redirect:/webContent/index.html";
-		}
 		
 		// run the login method.
 		// login successful - return the user
 		// login fail - return null
-		User loginUser = userService.login(user);
+		User loginUser = userService.login(userAccount);
 		
 		// set the login status
 		String status = (loginUser != null ? Constant.SUCCESS : Constant.ERROR);
@@ -99,16 +99,15 @@ public class LoginController {
 			ShareMem.userOrderBufferMap.put(loginUser.getId(), orders);
 //			ShareMem.userIdOrdersDispatcher.put(loginUser.getId(),ordersDispatcher);
 
-			Cookie cookie = new Cookie("user_id", loginUser.getId().toString());
-			cookie.setPath("/");
-			response.addCookie(cookie);
 
-			 return "redirect:/html/order_index.html?userId=" + loginUser.getId();
-			 
+			success.put("success",true);
+			return JsonUtil.jsonToMap(new String[]{"data"},
+					new Object[]{success});
 		}else{
-			 return "redirect:/index.html";
+			success.put("success",false);
+			return JsonUtil.jsonToMap(new String[]{"data"},
+					new Object[]{success});
 		}
-		
 	}
 	
 	private User installUser(String account ,String password) {

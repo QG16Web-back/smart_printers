@@ -19,7 +19,7 @@ public interface UserMapper {
     
     List<User> selectAllUser();
     
-    User selectByLogin(User user);
+    User selectByLogin(String userAccount);
 
     int updateByPrimaryKeySelective(User record);
 

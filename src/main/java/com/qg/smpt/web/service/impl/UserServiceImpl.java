@@ -88,11 +88,11 @@ public class UserServiceImpl implements UserService{
 		}
 	}
 	
-	public User login(User user) {
+	public User login(String userAccount) {
 		User loginUser = null;
 		try{
 			
-			loginUser = userMapper.selectByLogin(user);
+			loginUser = userMapper.selectByLogin(userAccount);
 
 			if(loginUser != null && loginUser.getId() > 0) {
 				loginUser = userMapper.selectUserPrinter(loginUser.getId());

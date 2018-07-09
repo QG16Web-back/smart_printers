@@ -29,7 +29,7 @@ public interface UserService {
 	 * 用户登录
 	 * @return 
 	 */
-	public User login(User user) ;
+	public User login(String userAccount) ;
 	
 	/**
 	 * 获取用户打印机

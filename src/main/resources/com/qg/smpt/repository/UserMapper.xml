@@ -66,8 +66,8 @@
 		and up.printer_id = p.id;
 	</select>
 
-	<select id="selectByLogin" resultMap="BaseResultMap" parameterType="com.qg.smpt.web.model.User">
-		select id from user where user_account = #{userAccount} and user_password = #{userPassword}
+	<select id="selectByLogin" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select * from user where user_account = #{userAccount}
 	</select>
 
 
