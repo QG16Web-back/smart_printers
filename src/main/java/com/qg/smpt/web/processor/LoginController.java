@@ -61,15 +61,19 @@ public class LoginController {
 		
 		return JsonUtil.jsonToMap(new String[]{"retcode"}, new Object[]{retcode});
 	}
-	
-	
-	@RequestMapping(value="/login", method=RequestMethod.GET, produces="application/html;charset=utf-8" )
+
+	@RequestMapping(value="/index", method=RequestMethod.GET, produces="application/html;charset=utf-8" )
+	public String index() {
+		return "redirect:/html/login.html";
+	}
+
+	@RequestMapping(value="/login", method=RequestMethod.POST, produces="application/html;charset=utf-8" )
 	public String login(String userAccount, String userPassword, HttpServletRequest request, HttpServletResponse response) {
 		User user = installUser(userAccount, userPassword);
 		
 		// check the login infomation is correct
 		if(!checkInput(user)){
-			 return "redirect:/webContent/index.html";
+			 return "redirect:/html/login.html";
 		}
 		
 		// run the login method.
@@ -103,10 +107,10 @@ public class LoginController {
 			cookie.setPath("/");
 			response.addCookie(cookie);
 
-			 return "redirect:/html/order_index.html?userId=" + loginUser.getId();
+			 return "redirect:/html/orderIndex.html?userId=" + loginUser.getId();
 			 
 		}else{
-			 return "redirect:/index.html";
+			 return "redirect:/html/login.html";
 		}
 		
 	}
