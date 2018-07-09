@@ -66,6 +66,7 @@ public class LoginController {
 	
 	
 	@RequestMapping(value="/login", method=RequestMethod.POST, produces="application/json;charset=utf-8" )
+	@ResponseBody
 	public String login(@RequestBody Map<String, String> map, HttpServletRequest request) {
 		String userAccount = map.get("userAccount");
 
